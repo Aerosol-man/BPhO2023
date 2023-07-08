@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>kepler.qml</file>
+        <file>planet_data.csv</file>
+        <file>cross.png</file>
+        <file>solarsystem2d.qml</file>
+        <file>simpson.qml</file>
+        <file>lineGenerator.js</file>
+        <file>solarsystem3d.qml</file>
+    </qresource>
+</RCC>

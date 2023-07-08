@@ -1,0 +1,29 @@
+#ifndef ORBITS_H
+#define ORBITS_H
+
+#include <QObject>
+#include <QVector2D>
+#include "planetdata.h"
+#include <QtMath>
+#include <xtensor.hpp>
+
+#include "math.h"
+
+class Orbits : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Orbits(QObject *parent = nullptr);
+    Orbits(QObject *parent = nullptr, PlanetData* _data = nullptr);
+
+    Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100);
+    Q_INVOKABLE QVector<QVector3D> getOrbit3D(int index, int numSamples = 100);
+    Q_INVOKABLE QVector2D getMaxDisplacement(int index);
+signals:
+
+private:
+    PlanetData* data;
+
+};
+
+#endif // ORBITS_H
