@@ -9,12 +9,14 @@ INCLUDEPATH += "C:/Users/ademo/cpp/xtensor-0.24.4/include" "C:/Users/ademo/cpp/x
 
 SOURCES += \
         angleintegrator.cpp \
+        linesimplify.cpp \
         main.cpp \
         orbits.cpp \
         planetdata.cpp \
         simulator.cpp
 HEADERS += \
     angleintegrator.h \
+    linesimplify.h \
     math.h \
     orbits.h \
     planetdata.h \

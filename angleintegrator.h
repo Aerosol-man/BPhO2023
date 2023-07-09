@@ -2,11 +2,9 @@
 #define ANGLEINTEGRATOR_H
 
 #include <QObject>
-#include <QList>
 #include <QVector>
 #include <QVector2D>
 #include <QtMath>
-#include <QThread>
 
 #include <xtensor.hpp>
 //#include <cmath>
@@ -19,7 +17,6 @@
 class AngleIntegrator : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QVector<QVector2D> points MEMBER _points NOTIFY pointsChanged)
 public:
     explicit AngleIntegrator(QObject *parent = nullptr);
     AngleIntegrator(QObject *parent = nullptr, PlanetData *planetData = nullptr);
@@ -27,13 +24,6 @@ public:
     Q_INVOKABLE QVector<QVector2D> fromPlanet(int index, int periods = 1);
     Q_INVOKABLE QVector<QVector2D> fromValues(double period, double ecc, int periods = 1);
 
-    QVector<QVector2D> _points;
-    xt::xarray<double> __points; //This is bad variable naming
-
-    QThread workerThread;
-
-signals:
-    void pointsChanged();
 private:
     PlanetData *data;
 
