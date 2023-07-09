@@ -5,7 +5,7 @@ CONFIG += qmltypes
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += "C:/Users/Ademola/cpp/xtensor-0.24.4/include" "C:/Users/Ademola/cpp/xtl-0.7.5/include" "C:/Users/Ademola/cpp/xtensor-0.24.4/build"
+INCLUDEPATH += "C:/Users/ademo/cpp/xtensor-0.24.4/include" "C:/Users/ademo/cpp/xtl-0.7.5/include" "C:/Users/ademo/cpp/xtensor-0.24.4/build"
 
 SOURCES += \
         angleintegrator.cpp \

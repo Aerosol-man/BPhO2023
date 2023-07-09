@@ -11,31 +11,24 @@ Item {
     property rect chartBounds: Qt.rect(0, 0, 300, 10)
     property bool canPlot: false
 
-    function requestPlot(index, periods = 1) {
+    function plotGraph(index, periods=1) {
+        let data;
+
         if (index !== -1) {
-            angleIntegrator.fromPlanet(index, periods)
+            data = angleIntegrator.fromPlanet(index, periods)
             updateSliders(index)
         }
         else {
-            angleIntegrator.fromValues(periodSlider.value, eccSlider.value, periods)
+            data = angleIntegrator.fromValues(periodSlider.value, eccSlider.value, periods)
         }
-    }
 
-    function plotGraph(data) {
         spline.clear()
+        line.clear()
         for (let i = 0; i < data.length; i++) {
             spline.append(data[i].x, data[i].y)
+            line.append(data[i].x, data[i].x)
         }
 
-        chartBounds = Qt.rect(0, 0, data[data.length - 1].x, data[data.length - 1].y)
-        canPlot = true
-    }
-
-    function plotGraph(data) {
-        spline.clear()
-        for (let i = 0; i < data.length; i++) {
-            spline.append(data[i].x, data[i].y)
-        }
         chartBounds = Qt.rect(0, 0, data[data.length - 1].x, data[data.length - 1].y)
         canPlot = true
     }
@@ -55,9 +48,13 @@ Item {
 
     Timer {
         id: plotTimer
-        interval: 500
+        interval: 1000
         repeat: false
         running: false
+
+        onTriggered: {
+            plotButton.enabled = true
+        }
     }
 
     ColumnLayout {
@@ -157,17 +154,16 @@ Item {
         }
 
         Button {
+            id: plotButton
             text: "Plot Graph"
             onClicked: {
                 // Avoid sending too many requests to the C++ backend
                 if (plotTimer.running && canPlot) { return }
 
                 // This crashes sometimes. I don't know why.
-                lineGenerator.sendMessage({'integrator': angleIntegrator,
-                                          'periods': numPeriods.value,
-                                          'period': periodSlider.value,
-                                          'eccentricity': eccSlider.value})
+                plotGraph(plotType.currentValue, numPeriods.value)
 
+                plotButton.enabled = false
                 plotTimer.start()
                 canPlot = false
             }
@@ -211,14 +207,7 @@ Item {
         }
     }
 
-    WorkerScript {
-        id: lineGenerator
-        source: "lineGenerator.js"
-
-        onMessage: (messageObject) => plotGraph(messageObject.reply)
-    }
-
     Component.onCompleted: {
-        lineGenerator.integrator = angleIntegrator
+        plotGraph(8, 1)
     }
 }
