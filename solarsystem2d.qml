@@ -13,7 +13,7 @@ Item {
     property rect chartBounds: Qt.rect(-40, -40, 80, 80)
     property var maxBounds: []
     property var animationProgress: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    property int numPoints: 300
+    //property int numPoints: 300
     property real animationSpeed: 0.01
 
     function innerPlanetsVisible(visible) {
@@ -40,6 +40,7 @@ Item {
     }
 
     function drawPlanet(ctx, index, progress) {
+        let numPoints = planetPaths[index].count
         let n = progress * numPoints;
         let p1 = planetPaths[index].at(Math.min(Math.floor(n), numPoints - 1));
         let p2 = planetPaths[index].at(Math.min(Math.ceil(n), numPoints - 1));
@@ -273,11 +274,11 @@ Item {
 
     Component.onCompleted: {
         for (let i = 0; i < 9; i++) {
-            let path = orbits.getOrbit(i, numPoints)
+            let path = orbits.getOrbit(i, 300, true)
             maxBounds.push(orbits.getMaxDisplacement(i))
             canvas.planetColours.push(planetPaths[i].color)
 
-            for (let j = 0; j < numPoints; j++) {
+            for (let j = 0; j < path.length; j++) {
                 planetPaths[i].append(path[j].x, path[j].y)
             }
         }

@@ -20,7 +20,7 @@ QVector2D Orbits::getMaxDisplacement(int index)
     return QVector2D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2));
 }
 
-QVector<QVector2D> Orbits::getOrbit(int index, int numSamples)
+QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
 {
     qreal radius = data->_orbitalPeriods[index];
     qreal eccentricity = data->_eccentricities[index];
@@ -30,19 +30,27 @@ QVector<QVector2D> Orbits::getOrbit(int index, int numSamples)
     xt::xtensor<double, 1> theta = xt::linspace(0.0, TAU, numSamples);
 
     xt::xtensor<double, 1> distances = getDistance(radius, eccentricity, theta);
-    auto displacements = xt::stack(xt::xtuple(distances * xt::cos(theta), distances * xt::sin(theta)));
+    xt::xarray<double> displacements = xt::stack(xt::xtuple(distances * xt::cos(theta), distances * xt::sin(theta)));
+    displacements = xt::rot90(displacements);
+
+    if (simplify)
+    {
+        qDebug() << "Points before simplifying: {" << displacements.shape(0) << ", " << displacements.shape(1) << "}\n";
+        displacements = LineSimplify::vwReduce(displacements, 1e-20);
+        qDebug() << "Points after simplifying: {" << displacements.shape(0) << ", " << displacements.shape(1) << "}\n";
+    }
 
     for (int i = 0; i < numSamples; i++)
     {
-        out.append(QVector2D(displacements(0, i), displacements(1, i)));
+        out.append(QVector2D(displacements(i, 0), displacements(i, 1)));
     }
 
     return out;
 }
 
-QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples)
+QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples, bool simplify)
 {
-    QVector<QVector2D> points2d = getOrbit(index, numSamples);
+    QVector<QVector2D> points2d = getOrbit(index, numSamples, simplify);
     QVector<QVector3D> out;
 
     double inc = data->_inclinations[index];

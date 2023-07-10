@@ -6,6 +6,7 @@
 #include "planetdata.h"
 #include <QtMath>
 #include <xtensor.hpp>
+#include "linesimplify.h"
 
 #include "math.h"
 
@@ -16,8 +17,8 @@ public:
     explicit Orbits(QObject *parent = nullptr);
     Orbits(QObject *parent = nullptr, PlanetData* _data = nullptr);
 
-    Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100);
-    Q_INVOKABLE QVector<QVector3D> getOrbit3D(int index, int numSamples = 100);
+    Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100, bool simplify = false);
+    Q_INVOKABLE QVector<QVector3D> getOrbit3D(int index, int numSamples = 100, bool simplify = false);
     Q_INVOKABLE QVector2D getMaxDisplacement(int index);
 signals:
 
