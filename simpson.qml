@@ -23,10 +23,14 @@ Item {
         }
 
         spline.clear()
-        line.clear()
         for (let i = 0; i < data.length; i++) {
             spline.append(data[i].x, data[i].y)
-            line.append(data[i].x, data[i].x)
+        }
+
+        data = angleIntegrator.fromValues(periodSlider.value, 0, periods)
+        line.clear()
+        for (let i = 0; i < data.length; i++) {
+            line.append(data[i].x, data[i].y)
         }
 
         chartBounds = Qt.rect(0, 0, data[data.length - 1].x, data[data.length - 1].y)
@@ -195,15 +199,15 @@ Item {
         }
 
         SplineSeries {
-            id: spline
-            axisX: xAxis; axisY: yAxis
-            name: "e = 0.244"
-        }
-
-        LineSeries {
             id: line
             axisX: xAxis; axisY: yAxis
             name: "e = 0"
+        }
+
+        SplineSeries {
+            id: spline
+            axisX: xAxis; axisY: yAxis
+            name: "e = 0.244"
         }
     }
 

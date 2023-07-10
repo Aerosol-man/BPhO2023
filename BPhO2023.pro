@@ -1,4 +1,3 @@
-QT += quick charts gui
 CONFIG += qmltypes
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -26,7 +25,7 @@ HEADERS += \
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-# QML_IMPORT_PATH += $PWD
+QML_IMPORT_PATH += $PWD
 QML_IMPORT_NAME = com.aerosolm.keplergraph
 QML_IMPORT_MAJOR_VERSION = 1
 
@@ -39,3 +38,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+QT += quick charts

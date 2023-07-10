@@ -41,7 +41,16 @@ Item {
 
         OrthographicCamera {
             id: camera
-            position: Qt.vector3d(200, 200, 200)
+
+            property real magnification: 2.0
+
+            position: Qt.vector3d(100, 100, 100)
+            horizontalMagnification: magnification
+            verticalMagnification: magnification
+        }
+
+        WasdController {
+            controlledObject: camera
         }
 
         DirectionalLight {
@@ -60,6 +69,19 @@ Item {
                     updatePlanet(i, animationProgress[i])
                 }
             }
+        }
+
+        Model {
+            id: boundsRect
+            source: "#Cube"
+            position: Qt.vector3d(0, 0, 0)
+
+            materials: [ CustomMaterial {
+                shadingMode: CustomMaterial.Unshaded
+                cullMode: CustomMaterial.BackFaceCulling
+                //vertexShader: "outlinevertex.vert"
+                fragmentShader: "outlineshader.frag"
+            }]
         }
 
         Model {

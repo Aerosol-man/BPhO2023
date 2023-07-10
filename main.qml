@@ -59,11 +59,9 @@ Item {
             }
             Button {
                 text: "3D Solar system"
-                onClicked: openPage("solarsystem3d.qml")
+                onClicked: openPage("_solarsystem3d.qml")
             }
         }
     }
-
-
 }
 

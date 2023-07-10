@@ -8,5 +8,6 @@
         <file>simpson.qml</file>
         <file>lineGenerator.js</file>
         <file>solarsystem3d.qml</file>
+        <file>outlineshader.frag</file>
     </qresource>
 </RCC>
