@@ -279,7 +279,8 @@ Item {
             canvas.planetColours.push(planetPaths[i].color)
 
             for (let j = 0; j < path.length; j++) {
-                planetPaths[i].append(path[j].x, path[j].y)
+                //if (path[j].x !== 0.0 || (path[j].y !== 0.0 && path[j].x !== 0.0) || path[j].x !== Infinity || path[j].x !== -Infinity)
+                    planetPaths[i].append(path[j].x, path[j].y)
             }
         }
         setPlanetView("inner")

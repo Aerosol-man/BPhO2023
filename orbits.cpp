@@ -36,13 +36,21 @@ QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
     if (simplify)
     {
         qDebug() << "Points before simplifying: {" << displacements.shape(0) << ", " << displacements.shape(1) << "}\n";
-        displacements = LineSimplify::vwReduce(displacements, 1e-20);
-        qDebug() << "Points after simplifying: {" << displacements.shape(0) << ", " << displacements.shape(1) << "}\n";
-    }
+        xt::xarray<double> _displacements = LineSimplify::vwReduce(displacements, 1);
 
-    for (int i = 0; i < numSamples; i++)
+        for (int i = 0; i < _displacements.shape(0); i++)
+        {
+            out.append(QVector2D(_displacements(i, 0), _displacements(i, 1)));
+        }
+        qDebug() << "Points after simplifying: {" << _displacements.shape(0) << ", " << _displacements.shape(1) << "}\n";
+    }
+    else
     {
-        out.append(QVector2D(displacements(i, 0), displacements(i, 1)));
+        for (int i = 0; i < numSamples; i++)
+        {
+            out.append(QVector2D(displacements(i, 0), displacements(i, 1)));
+            //qDebug() << out[out.size() - 1];
+        }
     }
 
     return out;

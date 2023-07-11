@@ -2,7 +2,7 @@
 #define LINESIMPLIFY_H
 
 #include <cmath>
-
+#include<iterator>
 #include <xtensor.hpp>
 
 class LineSimplify
