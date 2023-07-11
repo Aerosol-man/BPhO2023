@@ -12,9 +12,19 @@ static double _getDistance(double r, double ecc, double theta) {
 }
 static auto getDistance = xt::vectorize(_getDistance);
 
+QVector2D Orbits::displacementAt(double theta, int planet)
+{
+    double r = _getDistance(data->_distances[planet], data->_eccentricities[planet], theta);
+
+    return QVector2D(r * qCos(theta), r * qSin(theta));
+}
+
 QVector2D Orbits::getMaxDisplacement(int index)
 {
-    qreal radius = data->_orbitalPeriods[index];
+    /*
+    This is just an estimate
+    */
+    qreal radius = data->_distances[index];
     qreal eccentricity = data->_eccentricities[index];
 
     return QVector2D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2));
@@ -22,7 +32,7 @@ QVector2D Orbits::getMaxDisplacement(int index)
 
 QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
 {
-    qreal radius = data->_orbitalPeriods[index];
+    qreal radius = data->_distances[index];
     qreal eccentricity = data->_eccentricities[index];
 
     QVector<QVector2D> out;
@@ -36,7 +46,7 @@ QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
     if (simplify)
     {
         qDebug() << "Points before simplifying: {" << displacements.shape(0) << ", " << displacements.shape(1) << "}\n";
-        xt::xarray<double> _displacements = LineSimplify::vwReduce(displacements, 1);
+        xt::xarray<double> _displacements = LineSimplify::vwReduce(displacements, 0.0001);
 
         for (int i = 0; i < _displacements.shape(0); i++)
         {
@@ -49,7 +59,6 @@ QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
         for (int i = 0; i < numSamples; i++)
         {
             out.append(QVector2D(displacements(i, 0), displacements(i, 1)));
-            //qDebug() << out[out.size() - 1];
         }
     }
 

@@ -10,7 +10,7 @@ Item {
     anchors.centerIn: parent
 
     property var planetPaths: [mercuryPath, venusPath, earthPath, marsPath, jupiterPath, saturnPath, uranusPath, neptunePath, plutoPath]
-    property rect chartBounds: Qt.rect(-40, -40, 80, 80)
+    property rect chartBounds: Qt.rect(-2.2, -2.2, 4.4, 4.4)
     property var maxBounds: []
     property var animationProgress: [0, 0, 0, 0, 0, 0, 0, 0, 0]
     //property int numPoints: 300
@@ -40,20 +40,19 @@ Item {
     }
 
     function drawPlanet(ctx, index, progress) {
-        let numPoints = planetPaths[index].count
-        let n = progress * numPoints;
-        let p1 = planetPaths[index].at(Math.min(Math.floor(n), numPoints - 1));
-        let p2 = planetPaths[index].at(Math.min(Math.ceil(n), numPoints - 1));
-        let position
-        if (p1 !== p2)
-            position = Qt.point(p1.x + (p2.x - p1.x) * (n - Math.floor(n)), p1.y + (p2.y - p1.y) * (n - Math.floor(n))); // Linear interpolation
-        else
-            position = p1 // Linear intterpolation is buggy for some reason
+//        let numPoints = planetPaths[index].count
+//        let n = progress * numPoints;
+//        let p1 = planetPaths[index].at(Math.min(Math.floor(n), numPoints - 1));
+//        let p2 = planetPaths[index].at(Math.min(Math.ceil(n), numPoints - 1));
+        let position = orbits.displacementAt(Math.PI * 2 * progress, index)
+//        if (p1 !== p2)
+//            position = Qt.point(p1.x + (p2.x - p1.x) * (n - Math.floor(n)), p1.y + (p2.y - p1.y) * (n - Math.floor(n))); // Linear interpolation
+//        else
+//            position = p1 // Linear interpolation is buggy for some reason
         position.x *= chart.plotArea.width / (2 * chartBounds.right);
         position.x += chart.plotArea.width / 2
         position.y *= chart.plotArea.height / (2 * chartBounds.bottom);
         position.y += chart.plotArea.height / 2
-        //console.log(p1, p2, position);
 
         ctx.beginPath();
         ctx.arc(position.x, position.y, 7.5, 0, Math.PI * 2);

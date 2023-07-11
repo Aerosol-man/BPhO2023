@@ -20,6 +20,7 @@ public:
     Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100, bool simplify = false);
     Q_INVOKABLE QVector<QVector3D> getOrbit3D(int index, int numSamples = 100, bool simplify = false);
     Q_INVOKABLE QVector2D getMaxDisplacement(int index);
+    Q_INVOKABLE QVector2D displacementAt(double theta, int planet);
 signals:
 
 private:
