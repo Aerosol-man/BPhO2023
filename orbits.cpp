@@ -22,10 +22,10 @@ QVector2D Orbits::displacementAt(double theta, int planet)
 QVector3D Orbits::displacementAt3D(double theta, int planet)
 {
     double r = _getDistance(data->_distances[planet], data->_eccentricities[planet], theta);
-    double inc = TO_RAD(data->_inclinations[planet]);
-    double xz = r * qCos(theta);
+    double inc = qDegreesToRadians(data->_inclinations[planet]);
+    double yz = r * qSin(theta);
 
-    return QVector3D(xz * qCos(inc), r * qSin(theta), xz * qSin(inc));
+    return QVector3D(r * qCos(theta), yz * qSin(inc), yz * qCos(inc));
 }
 
 QVector2D Orbits::getMaxDisplacement(int index)
@@ -84,12 +84,12 @@ QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples, bool simplify)
 
     xt::xarray<double> points2d = _getOrbit(radius, eccentricity, numSamples, simplify);
 
-    double inc = TO_RAD(data->_inclinations[index]);
+    double inc = qDegreesToRadians(data->_inclinations[index]);
 
-    xt::xarray<double> z = xt::eval(xt::col(points2d, 0));
+    xt::xarray<double> z = xt::eval(xt::col(points2d, 1));
 
-    xt::col(points2d, 0) *= qCos(inc);
-    z *= qSin(inc);
+    xt::col(points2d, 1) *= qSin(inc);
+    z *= qCos(inc);
 
     for (int i = 0; i < points2d.shape(0); i++)
     {

@@ -17,16 +17,53 @@ Item {
         let newX = ROOT_3 * (point.x - point.z)
         let newY = point.x + point.y + point.z
 
-        return Qt.vector2d(newX * INV_ROOT_6, newY * INV_ROOT_6)
+        //Flip y axis for screen coodinates
+        return Qt.vector2d(newX * INV_ROOT_6, -newY * INV_ROOT_6)
     }
 
     function fitToScreen(point) {
-        point.x *= canvas.width / bounds.width
-        point.x += canvas.width / 2
-        point.y *= canvas.height / bounds.height
-        point.y += canvas.height / 2
+        let newPoint = point
+        newPoint.x *= canvas.width / bounds.width
+        newPoint.x += canvas.width / 2
+        newPoint.y *= canvas.height / bounds.height
+        newPoint.y += canvas.height / 2
 
-        return point
+        return newPoint
+    }
+
+    function drawBox(ctx) {
+        //8 vertices of the cube, top face first
+        let points = [
+                Qt.vector3d(bounds.x, bounds.y, bounds.x),
+                Qt.vector3d(-bounds.x, bounds.y, bounds.x),
+                Qt.vector3d(-bounds.x, bounds.y, -bounds.x),
+                Qt.vector3d(bounds.x, bounds.y, -bounds.x),
+                Qt.vector3d(bounds.x, -bounds.y, bounds.x),
+                Qt.vector3d(-bounds.x, -bounds.y, bounds.x),
+                Qt.vector3d(-bounds.x, -bounds.y, -bounds.x),
+                Qt.vector3d(bounds.x, -bounds.y, -bounds.x),
+            ].map(to2D).map(fitToScreen)
+
+        //Draw both faces
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 4; j++) {
+                ctx.beginPath()
+                let start = points[j + i * 4]
+                let end = points[(j + 1) % 4 + i * 4]
+                ctx.moveTo(start.x, start.y)
+                ctx.lineTo(end.x, end.y)
+                ctx.stroke()
+            }
+        }
+        //Draw the connecting lines
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath()
+            let start = points[i]
+            let end = points[i + 4]
+            ctx.moveTo(start.x, start.y)
+            ctx.lineTo(end.x, end.y)
+            ctx.stroke()
+        }
     }
 
     function drawPlanet(ctx, index, progress) {
@@ -60,7 +97,9 @@ Item {
             ctx.fillStyle = "black"
             ctx.strokeStyle = "black"
 
-            for (let i = 0; i < 4; i++) {
+            drawBox(ctx)
+
+            for (let i = 0; i < 9; i++) {
                 drawPlanet(ctx, i, animationProgress[i])
             }
         }
