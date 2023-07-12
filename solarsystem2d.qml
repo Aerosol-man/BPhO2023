@@ -40,29 +40,22 @@ Item {
     }
 
     function drawPlanet(ctx, index, progress) {
-//        let numPoints = planetPaths[index].count
-//        let n = progress * numPoints;
-//        let p1 = planetPaths[index].at(Math.min(Math.floor(n), numPoints - 1));
-//        let p2 = planetPaths[index].at(Math.min(Math.ceil(n), numPoints - 1));
         let position = orbits.displacementAt(Math.PI * 2 * progress, index)
-//        if (p1 !== p2)
-//            position = Qt.point(p1.x + (p2.x - p1.x) * (n - Math.floor(n)), p1.y + (p2.y - p1.y) * (n - Math.floor(n))); // Linear interpolation
-//        else
-//            position = p1 // Linear interpolation is buggy for some reason
+
         position.x *= chart.plotArea.width / (2 * chartBounds.right);
         position.x += chart.plotArea.width / 2
         position.y *= chart.plotArea.height / (2 * chartBounds.bottom);
         position.y += chart.plotArea.height / 2
 
-        ctx.beginPath();
-        ctx.arc(position.x, position.y, 7.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath()
+        ctx.arc(position.x, position.y, 7.5, 0, Math.PI * 2)
+        ctx.fill()
     }
 
     function changeAnimationSpeed(amount) {
         animationSpeed *= amount
         animationSpeed = Math.min(Math.max(animationSpeed, 0.005), 2)
-        speedText.text =  "Animation speed: \n" + ((timer.interval * 10 ** -3) / animationSpeed).toPrecision(3) + " seconds \n = 1 Earth Year"
+        speedText.text =  "Animation speed: \n 1 second =\n" + (animationSpeed / (timer.interval * 10 ** -3)).toPrecision(3) + " Earth Years"
     }
 
     onChartBoundsChanged: {
@@ -273,7 +266,7 @@ Item {
 
     Component.onCompleted: {
         for (let i = 0; i < 9; i++) {
-            let path = orbits.getOrbit(i, 300, true)
+            let path = orbits.getOrbit(i, 100, true)
             maxBounds.push(orbits.getMaxDisplacement(i))
             canvas.planetColours.push(planetPaths[i].color)
 

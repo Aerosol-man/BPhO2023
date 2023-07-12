@@ -21,6 +21,10 @@ public:
     Q_INVOKABLE QVector<QVector3D> getOrbit3D(int index, int numSamples = 100, bool simplify = false);
     Q_INVOKABLE QVector2D getMaxDisplacement(int index);
     Q_INVOKABLE QVector2D displacementAt(double theta, int planet);
+    Q_INVOKABLE QVector3D displacementAt3D(double theta, int planet);
+
+    xt::xarray<double> _getOrbit(double radius, double eccentricity, int numSamples, bool simplify);
+
 signals:
 
 private:
