@@ -39,6 +39,16 @@ QVector2D Orbits::getMaxDisplacement(int index)
     return QVector2D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2));
 }
 
+QVector3D Orbits::getMaxDisplacement3D(int index)
+{
+    double radius = data->_distances[index];
+    double eccentricity = data->_eccentricities[index];
+    double inc = data->_inclinations[index];
+    double yz = _getDistance(radius, eccentricity, PI / 2);
+
+    return QVector3D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2), _getDistance(radius, eccentricity, 0.0));
+}
+
 xt::xarray<double> Orbits::_getOrbit(double radius, double eccentricity, int numSamples, bool simplify)
 {
     xt::xtensor<double, 1> theta = xt::linspace(0.0, TAU, numSamples);

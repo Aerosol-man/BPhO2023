@@ -13,20 +13,18 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
     */
     xt::xarray<double> out = points;
     int length = points.shape(0);
+
+    //Calculate area covered by the curve
     auto x = xt::view(out, xt::all(), 0);
     auto y = xt::view(out, xt::all(), 1);
-    //Calculate area covered by the curve
     double curveArea = (xt::amax(x)() - xt::amin(x)()) * (xt::amax(y)() - xt::amin(y)());
     double epsArea = curveArea * epsilon;
-
-    int minIndex;
-    double minArea;
 
     while(length > 3)
     {
         //Store the index & area of the point with the lowest efective area
-        minIndex = -1;
-        minArea = curveArea;
+        int minIndex = -1;
+        double minArea = curveArea;
 
         for (int i = 1; i < length - 1; i++)
         {

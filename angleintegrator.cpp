@@ -35,14 +35,11 @@ xt::xtensor<double, 1> interpolate(xt::xtensor<double, 1> &x, xt::xtensor<double
     return out;
 }
 
-//void Worker::process(double period, double ecc, int periods)
-//QVector<QVector2D> integrate(double period, double ecc, int periods)
-
+//$ simpson.m
 QVector<QVector2D> AngleIntegrator::fromValues(double period, double ecc, int periods)
 {
     QVector<QVector2D> out;
     double lastOrbitPeriod = 0.0;
-    xt::xarray<double> data;
 
     for (int i = 0; i < periods; i++)
     {
@@ -65,11 +62,6 @@ QVector<QVector2D> AngleIntegrator::fromValues(double period, double ecc, int pe
         xt::xtensor<double, 1> t = xt::linspace(xt::amin(calculatedTime)(), xt::amax(calculatedTime)(), numPoints);
         xt::xtensor<double, 1> interpolatedTheta = interpolate(calculatedTime, theta, t);
 
-        if (i == 0)
-        {
-            data = xt::stack(xt::xtuple(t, interpolatedTheta));
-        }
-
         for (int ii = 0; ii < t.size(); ii++)
         {
             out.append(QVector2D(t[ii], interpolatedTheta[ii]));
@@ -80,6 +72,7 @@ QVector<QVector2D> AngleIntegrator::fromValues(double period, double ecc, int pe
 
     return out;
 }
+//$ simpson.m
 
 QVector<QVector2D> AngleIntegrator::fromPlanet(int index, int periods)
 {

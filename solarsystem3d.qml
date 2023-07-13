@@ -1,4 +1,6 @@
 import QtQuick 2.15
+import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
     width: 640
@@ -7,8 +9,20 @@ Item {
 
     property var animationProgress: [0, 0, 0, 0, 0, 0, 0, 0, 0]
     property real animationSpeed: 0.01
-    property var planetPaths: []
+    property var planetPaths: [[],[]]
+    property var colours: ["orange", "red", "pink", "aqua", "cyan", "lawngreen", "salmon", "lightblue", "khaki"]
     property rect bounds: Qt.rect(-2.2, -2.2, 4.4, 4.4)
+    property real scale: 0.75
+    property int planetView: 0
+
+    function lerp(p1, p2, t) {
+
+        return p1 + (p2 - p1) * t
+    }
+    function vLerp(p1, p2, t) {
+        return Qt.vector2d(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t)
+    }
+
 
     function to2D(point) {
         const ROOT_3 = Math.sqrt(3)
@@ -18,7 +32,7 @@ Item {
         let newY = point.x + point.y + point.z
 
         //Flip y axis for screen coodinates
-        return Qt.vector2d(newX * INV_ROOT_6, -newY * INV_ROOT_6)
+        return Qt.vector2d(newX * INV_ROOT_6 * scale, -newY * INV_ROOT_6 * scale)
     }
 
     function fitToScreen(point) {
@@ -32,38 +46,77 @@ Item {
     }
 
     function drawBox(ctx) {
+        const lines = [
+                        [4, 5],
+                        [5, 6],
+                        [6, 7],
+                        [7, 4],
+                        [5, 1],
+                        [4, 0],
+                        [7, 3],
+                        [1, 0],
+                        [0, 3]
+                    ]
         //8 vertices of the cube, top face first
+        let rectBounds
+
+        if (planetView == 0)
+            rectBounds = orbits.getMaxDisplacement3D(3)
+        else
+            rectBounds = orbits.getMaxDisplacement3D(8)
+
         let points = [
-                Qt.vector3d(bounds.x, bounds.y, bounds.x),
-                Qt.vector3d(-bounds.x, bounds.y, bounds.x),
-                Qt.vector3d(-bounds.x, bounds.y, -bounds.x),
-                Qt.vector3d(bounds.x, bounds.y, -bounds.x),
-                Qt.vector3d(bounds.x, -bounds.y, bounds.x),
-                Qt.vector3d(-bounds.x, -bounds.y, bounds.x),
-                Qt.vector3d(-bounds.x, -bounds.y, -bounds.x),
-                Qt.vector3d(bounds.x, -bounds.y, -bounds.x),
+                Qt.vector3d(rectBounds.x, rectBounds.y, rectBounds.z),
+                Qt.vector3d(-rectBounds.x, rectBounds.y, rectBounds.z),
+                Qt.vector3d(-rectBounds.x, rectBounds.y, -rectBounds.z),
+                Qt.vector3d(rectBounds.x, rectBounds.y, -rectBounds.z),
+                Qt.vector3d(rectBounds.x, -rectBounds.y, rectBounds.z),
+                Qt.vector3d(-rectBounds.x, -rectBounds.y, rectBounds.z),
+                Qt.vector3d(-rectBounds.x, -rectBounds.y, -rectBounds.z),
+                Qt.vector3d(rectBounds.x, -rectBounds.y, -rectBounds.z),
             ].map(to2D).map(fitToScreen)
 
-        //Draw both faces
-        for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 4; j++) {
-                ctx.beginPath()
-                let start = points[j + i * 4]
-                let end = points[(j + 1) % 4 + i * 4]
-                ctx.moveTo(start.x, start.y)
-                ctx.lineTo(end.x, end.y)
-                ctx.stroke()
-            }
-        }
-        //Draw the connecting lines
-        for (let i = 0; i < 4; i++) {
+        //Nasty Hardcoded values
+        ctx.strokeStyle = "gray"
+        for (let i = 0; i < 5; i++){
+            let t = i / 5
+            let end
             ctx.beginPath()
-            let start = points[i]
-            let end = points[i + 4]
+            ctx.moveTo(lerp(points[0].x, points[1].x, t), lerp(points[0].y, points[1].y, t))
+            ctx.lineTo(lerp(points[4].x, points[5].x, t), lerp(points[4].y, points[5].y, t))
+            end = vLerp(points[7], points[6], t)
+            ctx.lineTo(end.x, end.y)
+            ctx.stroke()
+            ctx.fillText(lerp(-rectBounds.x, rectBounds.x, t).toPrecision(2), end.x + 5, end.y + 5)
+            ctx.beginPath()
+            ctx.moveTo(lerp(points[0].x, points[3].x, t), lerp(points[0].y, points[3].y, t))
+            ctx.lineTo(lerp(points[4].x, points[7].x, t), lerp(points[4].y, points[7].y, t))
+            end = vLerp(points[5], points[6], t)
+            ctx.lineTo(end.x, end.y)
+            ctx.stroke()
+            ctx.fillText(lerp(-rectBounds.z, rectBounds.z, t).toPrecision(2), end.x - 12, end.y + 12)
+            ctx.beginPath()
+            ctx.moveTo(lerp(points[1].x, points[5].x, t), lerp(points[1].y, points[5].y, t))
+            ctx.lineTo(lerp(points[0].x, points[4].x, t), lerp(points[0].y, points[4].y, t))
+            end = vLerp(points[3], points[7], t)
+            ctx.lineTo(end.x, end.y)
+            ctx.stroke()
+            ctx.fillText(lerp(-rectBounds.y, rectBounds.y, t).toPrecision(2), end.x + 3, end.y)
+        }
+        ctx.strokeStyle = "white"
+
+        for (let i = 0; i < lines.length; i++) {
+            let start = points[lines[i][0]]
+            let end = points[lines[i][1]]
+            ctx.beginPath()
             ctx.moveTo(start.x, start.y)
             ctx.lineTo(end.x, end.y)
             ctx.stroke()
         }
+
+//        ctx.fillText("x", points[5].x - 5, points[5].y + 5)
+//        ctx.fillText("y", points[0].x, points[0].y - 5)
+//        ctx.fillText("z", points[7].x + 5, points[7].y + 5)
     }
 
     function drawPlanet(ctx, index, progress) {
@@ -75,7 +128,7 @@ Item {
         ctx.arc(position.x, position.y, 7.5, 0, Math.PI * 2)
         ctx.fill()
 
-        let path = planetPaths[index]
+        let path = planetPaths[planetView][index]
 
         for (let i = 0; i < path.length; i++) {
             ctx.beginPath()
@@ -85,6 +138,18 @@ Item {
         }
     }
     
+    function setPlanetView(newValue)
+    {
+        if (newValue === 0) {
+            bounds = Qt.rect(-2.2, -2.2, 4.4, 4.4)
+            planetView = newValue
+        }
+        else if (newValue === 1) {
+            bounds = Qt.rect(-56, -56, 112, 112)
+            planetView = newValue
+        }
+    }
+
     Canvas {
         id: canvas
         anchors.fill: parent
@@ -93,13 +158,21 @@ Item {
             let ctx = getContext("2d")
 
             ctx.clearRect(0, 0, width, height)
-
             ctx.fillStyle = "black"
-            ctx.strokeStyle = "black"
+            ctx.fillRect(0, 0, width, height)
 
+
+            ctx.strokeStyle = "white"
+            ctx.fillStyle = "white"
             drawBox(ctx)
 
-            for (let i = 0; i < 9; i++) {
+            let start = 0
+            if (planetView === 1)
+                start = 4
+
+            for (let i = start; i < 9; i++) {
+                ctx.fillStyle = colours[i]
+                ctx.strokeStyle = colours[i]
                 drawPlanet(ctx, i, animationProgress[i])
             }
         }
@@ -119,9 +192,44 @@ Item {
         }
     }
 
+    Popup {
+        id: popup
+        x: 10
+        y: 10
+        width: 150
+        height: 100
+
+        ColumnLayout {
+            Label {
+                text: "Control Animation:"
+            }
+            Label { text: "Planet view:" }
+            RadioButton {
+                text: "Inner planets"
+                onClicked: {
+                    if (checked)
+                        setPlanetView(0)
+                }
+            }
+            RadioButton {
+                text: "Outer planets"
+                onClicked: {
+                    if (checked)
+                        setPlanetView(1)
+                }
+            }
+        }
+    }
+
     Component.onCompleted: {
         for (let i = 0; i < 9; i++) {
-            planetPaths.push(orbits.getOrbit3D(i, 100, true).map(to2D).map(fitToScreen))
+            planetPaths[0].push(orbits.getOrbit3D(i, 100, true).map(to2D).map(fitToScreen))
         }
+        setPlanetView(1)
+        for (let i = 0; i < 9; i++) {
+            planetPaths[1].push(orbits.getOrbit3D(i, 100, true).map(to2D).map(fitToScreen))
+        }
+        setPlanetView(0)
+        popup.open()
     }
 }
