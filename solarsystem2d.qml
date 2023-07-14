@@ -9,11 +9,12 @@ Item {
     height: 480
     anchors.centerIn: parent
 
+    signal close
+
     property var planetPaths: [mercuryPath, venusPath, earthPath, marsPath, jupiterPath, saturnPath, uranusPath, neptunePath, plutoPath]
     property rect chartBounds: Qt.rect(-2.2, -2.2, 4.4, 4.4)
     property var maxBounds: []
     property var animationProgress: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    //property int numPoints: 300
     property real animationSpeed: 0.01
 
     function innerPlanetsVisible(visible) {
@@ -141,6 +142,11 @@ Item {
                     onClicked: changeAnimationSpeed(1.25)
                 }
             }
+        }
+
+        Button {
+            text: "Close"
+            onClicked: solarSystem2d.parent.closePage()
         }
     }
 

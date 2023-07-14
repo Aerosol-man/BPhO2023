@@ -6,5 +6,6 @@
         <file>solarsystem2d.qml</file>
         <file>simpson.qml</file>
         <file>solarsystem3d.qml</file>
+        <file>spirograph.qml</file>
     </qresource>
 </RCC>

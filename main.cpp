@@ -9,12 +9,14 @@
 #include "planetdata.h"
 #include "angleintegrator.h"
 #include "orbits.h"
+#include "linegenerator.h"
 
 int main(int argc, char *argv[])
 {
     QScopedPointer<PlanetData> planetData(new PlanetData);
     QScopedPointer<Orbits> orbits(new Orbits(nullptr, planetData.data()));
     QScopedPointer<AngleIntegrator> angleIntegrator(new AngleIntegrator(nullptr, planetData.data()));
+    QScopedPointer<LineGenerator> lineGenerator(new LineGenerator(nullptr, planetData.data(), orbits.data(), angleIntegrator.data()));
 
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);
@@ -41,6 +43,7 @@ int main(int argc, char *argv[])
     rootContext->setContextProperty("planetData", planetData.data());
     rootContext->setContextProperty("orbits", orbits.data());
     rootContext->setContextProperty("angleIntegrator", angleIntegrator.data());
+    rootContext->setContextProperty("lineGenerator", lineGenerator.data());
 
     return app.exec();
 }

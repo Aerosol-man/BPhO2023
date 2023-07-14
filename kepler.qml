@@ -4,10 +4,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Item {
+    id: kepler
     width:640
     height: 480
     anchors.centerIn: parent
-    //anchors.fill: parent
+
+    signal close
 
     function plotData(rel){
         let numPoints = 50;

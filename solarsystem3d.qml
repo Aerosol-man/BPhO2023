@@ -7,6 +7,8 @@ Item {
     height: 480
     anchors.centerIn: parent
 
+    signal close
+
     property var animationProgress: [0, 0, 0, 0, 0, 0, 0, 0, 0]
     property real animationSpeed: 0.01
     property var planetPaths: [[],[]]
@@ -138,8 +140,7 @@ Item {
         }
     }
     
-    function setPlanetView(newValue)
-    {
+    function setPlanetView(newValue) {
         if (newValue === 0) {
             bounds = Qt.rect(-2.2, -2.2, 4.4, 4.4)
             planetView = newValue
@@ -160,7 +161,6 @@ Item {
             ctx.clearRect(0, 0, width, height)
             ctx.fillStyle = "black"
             ctx.fillRect(0, 0, width, height)
-
 
             ctx.strokeStyle = "white"
             ctx.fillStyle = "white"
@@ -206,6 +206,7 @@ Item {
             Label { text: "Planet view:" }
             RadioButton {
                 text: "Inner planets"
+                checked: true
                 onClicked: {
                     if (checked)
                         setPlanetView(0)

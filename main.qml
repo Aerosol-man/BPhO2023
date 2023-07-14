@@ -10,27 +10,9 @@ Item {
     //title: qsTr("Hello World")
 
     function openPage(url) {
-        currentPage.visible = true;
-        mainMenu.visible = false;
-        currentPage.model.set(0, {component: url});
-    }
-
-    GridView {
-        id: currentPage
-        visible: false
-        anchors.centerIn: parent
-        anchors.fill: parent
-        boundsMovement: Flickable.StopAtBounds
-
-        model: ListModel {
-            ListElement {component: "kepler.qml"}
-        }
-
-        delegate: Loader {
-            id: pageLoader
-            source: component
-            asynchronous: true
-        }
+        currentPage.visible = true
+        mainMenu.visible = false
+        currentPage.model.set(0, {component: url})
     }
 
     Item {
@@ -60,6 +42,33 @@ Item {
             Button {
                 text: "3D Solar system"
                 onClicked: openPage("solarsystem3d.qml")
+            }
+            Button {
+                text: "Spirograph"
+                onClicked: openPage("spirograph.qml")
+            }
+        }
+    }
+
+    GridView {
+        id: currentPage
+        visible: false
+        anchors.centerIn: parent
+        anchors.fill: parent
+        boundsMovement: Flickable.StopAtBounds
+
+        model: ListModel {
+            ListElement {component: "kepler.qml"}
+        }
+
+        delegate: Loader {
+            id: pageLoader
+            source: component
+            asynchronous: true
+
+            function closePage() {
+                currentPage.visible = false
+                mainMenu.visible = true
             }
         }
     }

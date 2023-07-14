@@ -8,6 +8,8 @@ Item {
     height: 480
     anchors.centerIn: parent
 
+    signal close
+
     property rect chartBounds: Qt.rect(0, 0, 300, 10)
     property bool canPlot: false
 
@@ -33,7 +35,7 @@ Item {
             line.append(data[i].x, data[i].y)
         }
 
-        chartBounds = Qt.rect(0, 0, data[data.length - 1].x, data[data.length - 1].y)
+        chartBounds = Qt.rect(0, 0, data[data.length - 1].x, Math.PI * 2 * periods)
         canPlot = true
     }
 
