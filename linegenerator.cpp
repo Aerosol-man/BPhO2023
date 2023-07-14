@@ -8,9 +8,7 @@ LineGenerator::LineGenerator(QObject *parent, PlanetData *planetData, Orbits *or
     integrator = intg;
 }
 
-static double lerp(double a, double b, double t) {return a + (a - b * t);}
-
-QVector<QVector4D> LineGenerator::lines(int p1, int p2, int periods)
+QVector<QVector4D> LineGenerator::lines(int p1, int p2, int periods, int samples)
 {
     QVector<QVector4D> out;
 
@@ -20,11 +18,11 @@ QVector<QVector4D> LineGenerator::lines(int p1, int p2, int periods)
     double innerPeriod = data->_orbitalPeriods[inner];
     double outerPeriod = data->_orbitalPeriods[outer];
 
-    xt::xtensor<double, 2> outerAngleTimes = integrator->integrate(outerPeriod, data->_eccentricities[outer], periods, false, 100);
+    xt::xtensor<double, 2> outerAngleTimes = integrator->integrate(outerPeriod, data->_eccentricities[outer], periods, false, samples);
     xt::xtensor<double, 1> t = xt::col(outerAngleTimes, 0);
     xt::xtensor<double, 1> outerAngles = xt::col(outerAngleTimes, 1);
 
-    xt::xarray<double> innerAngleTimes = integrator->integrate(innerPeriod, data->_eccentricities[inner], 1, false, 100);
+    xt::xarray<double> innerAngleTimes = integrator->integrate(innerPeriod, data->_eccentricities[inner], 1, false, samples);
     xt::xtensor<double, 1> innerTimes = xt::col(innerAngleTimes, 0);
     xt::xtensor<double, 1> innerAngles = xt::col(innerAngleTimes, 1);
     xt::xtensor<double, 1> wrappedTimes = xt::fmod(t, innerPeriod);

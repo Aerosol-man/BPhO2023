@@ -21,7 +21,7 @@ public:
     explicit LineGenerator(QObject *parent = nullptr);
     LineGenerator(QObject *parent = nullptr, PlanetData *planetData = nullptr, Orbits *orb = nullptr, AngleIntegrator *intg = nullptr);
 
-    Q_INVOKABLE QVector<QVector4D> lines(int p1, int p2, int periods);
+    Q_INVOKABLE QVector<QVector4D> lines(int p1, int p2, int periods, int samples);
 
 private:
     PlanetData *data;

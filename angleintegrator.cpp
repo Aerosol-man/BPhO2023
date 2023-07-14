@@ -19,7 +19,17 @@ xt::xtensor<double, 1> AngleIntegrator::interpolate(xt::xtensor<double, 1> &x, x
     for (int i = 0; i < samplePoints.size(); i++)
     {
         // Get the first number greater than the sample value
-        auto upperBound = std::upper_bound(x.begin(), x.end(), samplePoints[i]);
+        auto upperBound = x.begin();
+
+        while (*upperBound < samplePoints[i] && upperBound != x.end())
+        {
+            upperBound++;
+        }
+        if (upperBound == x.end())
+        {
+            out[i] = *upperBound;
+            continue;
+        }
 
         if (*upperBound != x[0])
         {

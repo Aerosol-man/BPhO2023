@@ -36,13 +36,13 @@ Item {
         return Qt.vector4d(x, y, z, w)
     }
 
-    function setLines(p1, p2, n) {
+    function setLines(p1, p2, n, s) {
         planet1 = p1
         planet2 = p2
 
         plotSize = orbits.getMaxDisplacement(Math.max(p1, p2))
         plotSize.y = plotSize.x
-        lines = lineGenerator.lines(p1, p2, n).map(fit4ToScreen)
+        lines = lineGenerator.lines(p1, p2, n, s).map(fit4ToScreen)
     }
 
     Timer {
@@ -75,6 +75,8 @@ Item {
         
         ComboBox {
             id: planet1Selector
+            Layout.alignment: Qt.AlignHCenter
+
             textRole: "text"
             valueRole: "value"
             currentIndex: 1
@@ -96,6 +98,8 @@ Item {
 
         ComboBox {
             id: planet2Selector
+            Layout.alignment: Qt.AlignHCenter
+
             textRole: "text"
             valueRole: "value"
             currentIndex: 2
@@ -116,12 +120,27 @@ Item {
         }
 
         RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+
             Label { text: "Number of orbits" }
             SpinBox {
                 id: numOrbits
                 from: 1
                 to: 30
                 value: 10
+            }
+        }
+
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+
+            Label { text: "Samples per orbit" }
+            SpinBox {
+                id: numSamples
+                from: 10
+                to: 300
+                value: 100
+                stepSize: 20
             }
         }
 
@@ -142,7 +161,11 @@ Item {
 
             text: "Generate Spirograph"
             onClicked: {
-                setLines(planet1Selector.currentValue, planet2Selector.currentValue, numOrbits.value)
+                setLines(planet1Selector.currentValue,
+                         planet2Selector.currentValue,
+                         numOrbits.value,
+                         numSamples.value)
+
                 enabled = false
                 timeout.start()
                 canvas.requestPaint()
@@ -213,6 +236,7 @@ Item {
     }
 
     Component.onCompleted: {
-        setLines(1, 2, 8)
+        setLines(1, 2, 8, 100)
+        canvas.requestPaint()
     }
 }

@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Item {
+    id: solarSystem3d
     width: 640
     height: 480
     anchors.centerIn: parent
@@ -198,6 +199,7 @@ Item {
         y: 10
         width: 150
         height: 100
+        closePolicy: Popup.NoAutoClose
 
         ColumnLayout {
             Label {
@@ -220,6 +222,13 @@ Item {
                 }
             }
         }
+    }
+
+    Button {
+        x: 20
+        y: parent.height - 20
+        text: "Close"
+        onClicked: solarSystem3d.parent.closePage()
     }
 
     Component.onCompleted: {
