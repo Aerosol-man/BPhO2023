@@ -12,6 +12,7 @@ static auto angleFunction = xt::vectorize([](double ecc, double angle) -> double
     return qPow(1 - ecc * qCos(angle), -2);
 });
 
+//$ interpolate.m
 xt::xtensor<double, 1> AngleIntegrator::interpolate(xt::xtensor<double, 1> &x, xt::xtensor<double, 1> &y, xt::xtensor<double, 1> &samplePoints)
 {
     xt::xtensor<double, 1> out = xt::empty_like(samplePoints);
@@ -46,6 +47,7 @@ xt::xtensor<double, 1> AngleIntegrator::interpolate(xt::xtensor<double, 1> &x, x
     }
     return out;
 }
+//$ interpolate.m
 
 xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int periods, bool simplify, int n)
 {
