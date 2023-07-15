@@ -66,6 +66,11 @@ Item {
                 }
             }
         }
+        Button {
+            Layout.alignment: Qt.AlignHCenter
+            text: "Close"
+            onClicked: kepler.parent.closePage()
+        }
     }
     Flickable {
         anchors.left: controlPanel.right

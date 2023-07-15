@@ -68,7 +68,7 @@ Item {
         else
             rectBounds = orbits.getMaxDisplacement3D(8)
 
-        let points = [
+        const points = [
                 Qt.vector3d(rectBounds.x, rectBounds.y, rectBounds.z),
                 Qt.vector3d(-rectBounds.x, rectBounds.y, rectBounds.z),
                 Qt.vector3d(-rectBounds.x, rectBounds.y, -rectBounds.z),
@@ -120,6 +120,38 @@ Item {
 //        ctx.fillText("x", points[5].x - 5, points[5].y + 5)
 //        ctx.fillText("y", points[0].x, points[0].y - 5)
 //        ctx.fillText("z", points[7].x + 5, points[7].y + 5)
+    }
+
+    function drawBowTop(ctx) {
+        const lines = [
+                        [0, 1],
+                        [1, 2],
+                        [1, 3]
+                    ]
+        let rectBounds
+
+        if (planetView == 0)
+            rectBounds = orbits.getMaxDisplacement3D(3)
+        else
+            rectBounds = orbits.getMaxDisplacement3D(8)
+
+        const points = [
+                    Qt.vector3d(-rectBounds.x, rectBounds.y, rectBounds.z),
+                    Qt.vector3d(-rectBounds.x, rectBounds.y, -rectBounds.z),
+                    Qt.vector3d(rectBounds.x, rectBounds.y, -rectBounds.z),
+                    Qt.vector3d(-rectBounds.x, -rectBounds.y, -rectBounds.z)
+                ].map(to2D).map(fitToScreen)
+
+        ctx.strokeStyle = "white"
+
+        for (let i = 0; i < lines.length; i++) {
+            let start = points[lines[i][0]]
+            let end = points[lines[i][1]]
+            ctx.beginPath()
+            ctx.moveTo(start.x, start.y)
+            ctx.lineTo(end.x, end.y)
+            ctx.stroke()
+        }
     }
 
     function drawPlanet(ctx, index, progress) {
@@ -176,6 +208,8 @@ Item {
                 ctx.strokeStyle = colours[i]
                 drawPlanet(ctx, i, animationProgress[i])
             }
+
+            drawBowTop(ctx)
         }
     }
     
@@ -226,9 +260,12 @@ Item {
 
     Button {
         x: 20
-        y: parent.height - 20
+        y: parent.height - 30
         text: "Close"
-        onClicked: solarSystem3d.parent.closePage()
+        onClicked: {
+            popup.close()
+            solarSystem3d.parent.closePage()
+        }
     }
 
     Component.onCompleted: {

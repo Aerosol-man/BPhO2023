@@ -167,8 +167,9 @@ Item {
                          numSamples.value)
 
                 enabled = false
-                timeout.start()
                 canvas.requestPaint()
+                canvasHeading.text = `${planet1Selector.currentText}-${planet2Selector.currentText} spirograph`
+                timeout.start()
             }
         }
         Button {
@@ -177,6 +178,21 @@ Item {
             text: "Close"
             onClicked: spirograph.parent.closePage()
         }
+    }
+
+    Label {
+        id: canvasHeading
+        anchors.left: controlPanel.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: canvas.top
+
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        font.pixelSize: 18
+
+        text: "Venus-Earth spirograph"
+
     }
 
     Canvas {

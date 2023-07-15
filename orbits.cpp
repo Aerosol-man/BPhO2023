@@ -43,8 +43,8 @@ QVector3D Orbits::getMaxDisplacement3D(int index)
 {
     double radius = data->_distances[index];
     double eccentricity = data->_eccentricities[index];
-    double inc = data->_inclinations[index];
-    double yz = _getDistance(radius, eccentricity, PI / 2);
+//    double inc = data->_inclinations[index];
+//    double yz = _getDistance(radius, eccentricity, PI / 2);
 
     return QVector3D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2), _getDistance(radius, eccentricity, 0.0));
 }
@@ -104,6 +104,33 @@ QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples, bool simplify)
     for (int i = 0; i < points2d.shape(0); i++)
     {
         out.append(QVector3D(points2d(i, 0), points2d(i, 1), z(i)));
+    }
+
+    return out;
+}
+
+void Orbits::cacheOrbit(int index, int numSamples)
+{
+    cache = _getOrbit(data->_distances[index], data->_eccentricities[index], numSamples, false);
+}
+
+QVector<QVector2D> Orbits::getPtolemaic(int index, int numSamples)
+{
+    QVector<QVector2D> out;
+    xt::xarray<double> orbit;
+
+    if (index < 9)
+    {
+        orbit = _getOrbit(data->_distances[index], data->_eccentricities[index], numSamples, false) - cache;
+    }
+    else if (index == 9)
+    {
+        orbit = cache * -1;
+    }
+
+    for (int i = 0; i < orbit.shape(0); i++)
+    {
+        out.append(QVector2D(orbit(i, 0), orbit(i, 1)));
     }
 
     return out;

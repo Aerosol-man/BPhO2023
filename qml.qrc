@@ -7,5 +7,6 @@
         <file>simpson.qml</file>
         <file>solarsystem3d.qml</file>
         <file>spirograph.qml</file>
+        <file>ptolemy.qml</file>
     </qresource>
 </RCC>

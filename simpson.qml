@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 Item {
+    id: simpson
     width: 640
     height: 480
     anchors.centerIn: parent
@@ -173,6 +174,11 @@ Item {
                 plotTimer.start()
                 canPlot = false
             }
+        }
+
+        Button {
+            text: "Close"
+            onClicked: simpson.parent.closePage()
         }
     }
 
