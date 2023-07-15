@@ -7,10 +7,12 @@ Orbits::Orbits(QObject *parent, PlanetData *_data) : QObject{parent}
     data = _data;
 }
 
+//$ vectorise.m
 static double _getDistance(double r, double ecc, double theta) {
     return (r * (1 - SQUARED(ecc))) / (1 - ecc * std::cos(theta));
 }
 static auto getDistance = xt::vectorize(_getDistance);
+//$
 
 QVector2D Orbits::displacementAt(double theta, int planet)
 {
