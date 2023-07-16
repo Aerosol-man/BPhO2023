@@ -51,6 +51,11 @@ QVector3D Orbits::getMaxDisplacement3D(int index)
     return QVector3D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2), _getDistance(radius, eccentricity, 0.0));
 }
 
+xt::xarray<double> Orbits::_getOrbit(int index, int numSamples, bool simplify)
+{
+    return _getOrbit(data->_distances[index], data->_eccentricities[index], numSamples, simplify);
+}
+
 xt::xarray<double> Orbits::_getOrbit(double radius, double eccentricity, int numSamples, bool simplify)
 {
     xt::xtensor<double, 1> theta = xt::linspace(0.0, TAU, numSamples);
@@ -72,12 +77,9 @@ xt::xarray<double> Orbits::_getOrbit(double radius, double eccentricity, int num
 
 QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
 {
-    double radius = data->_distances[index];
-    double eccentricity = data->_eccentricities[index];
-
     QVector<QVector2D> out;
 
-    xt::xarray<double> displacements = _getOrbit(radius, eccentricity, numSamples, simplify);
+    xt::xarray<double> displacements = _getOrbit(index, numSamples, simplify);
 
     for (int i = 0; i < displacements.shape(0); i++)
     {
@@ -91,10 +93,7 @@ QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples, bool simplify)
 {
     QVector<QVector3D> out;
 
-    double radius = data->_distances[index];
-    double eccentricity = data->_eccentricities[index];
-
-    xt::xarray<double> points2d = _getOrbit(radius, eccentricity, numSamples, simplify);
+    xt::xarray<double> points2d = _getOrbit(index, numSamples, simplify);
 
     double inc = qDegreesToRadians(data->_inclinations[index]);
 
@@ -106,33 +105,6 @@ QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples, bool simplify)
     for (int i = 0; i < points2d.shape(0); i++)
     {
         out.append(QVector3D(points2d(i, 0), points2d(i, 1), z(i)));
-    }
-
-    return out;
-}
-
-void Orbits::cacheOrbit(int index, int numSamples)
-{
-    cache = _getOrbit(data->_distances[index], data->_eccentricities[index], numSamples, false);
-}
-
-QVector<QVector2D> Orbits::getPtolemaic(int index, int numSamples)
-{
-    QVector<QVector2D> out;
-    xt::xarray<double> orbit;
-
-    if (index < 9)
-    {
-        orbit = _getOrbit(data->_distances[index], data->_eccentricities[index], numSamples, false) - cache;
-    }
-    else if (index == 9)
-    {
-        orbit = cache * -1;
-    }
-
-    for (int i = 0; i < orbit.shape(0); i++)
-    {
-        out.append(QVector2D(orbit(i, 0), orbit(i, 1)));
     }
 
     return out;

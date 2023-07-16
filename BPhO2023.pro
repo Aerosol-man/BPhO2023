@@ -13,6 +13,7 @@ SOURCES += \
         main.cpp \
         orbits.cpp \
         planetdata.cpp \
+        ptolemy.cpp \
         simulator.cpp
 HEADERS += \
     angleintegrator.h \
@@ -21,6 +22,7 @@ HEADERS += \
     math.h \
     orbits.h \
     planetdata.h \
+    ptolemy.h \
     simulator.h \
     xtensor.hpp
 

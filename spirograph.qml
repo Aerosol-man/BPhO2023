@@ -15,6 +15,7 @@ Item {
     property int planet2
 
     function fitToScreen(p) {
+        if (!p.x && p.x !== 0.0) { return }
         let x = (p.x / plotSize.x) * canvas.width * scale
         x += canvas.width / 2
         let y = (p.y / plotSize.y) * canvas.height * scale
@@ -252,7 +253,7 @@ Item {
     }
 
     Component.onCompleted: {
-        setLines(1, 2, 8, 100)
+        setLines(1, 2, 10, 100)
         canvas.requestPaint()
     }
 }

@@ -41,6 +41,7 @@ Item {
     }
 
     function updateSliders(index) {
+        if (!(planetData.orbitalPeriods[index])) { return }
         periodSlider.value = planetData.orbitalPeriods[index]
         eccSlider.value = planetData.eccentricities[index]
     }
@@ -100,6 +101,8 @@ Item {
                     }
                     else
                         chart.title = "Orbit angle vs time"
+                    plotGraph(plotType.currentValue, numPeriods.value)
+
                 }
             }
         }
@@ -116,6 +119,7 @@ Item {
             Layout.fillWidth: true
             onValueChanged: {
                 eccLabel.text = value.toPrecision(3)
+                plotGraph(plotType.currentValue, numPeriods.value)
             }
             onMoved: plotType.currentIndex = 9
 
@@ -138,6 +142,7 @@ Item {
             Layout.fillWidth: true
             onValueChanged: {
                 periodLabel.text = value.toPrecision(3)
+                plotGraph(plotType.currentValue, numPeriods.value)
             }
             onMoved: plotType.currentIndex = 9
 
@@ -160,21 +165,21 @@ Item {
             }
         }
 
-        Button {
-            id: plotButton
-            text: "Plot Graph"
-            onClicked: {
-                // Avoid sending too many requests to the C++ backend
-                if (plotTimer.running && canPlot) { return }
+//        Button {
+//            id: plotButton
+//            text: "Plot Graph"
+//            onClicked: {
+//                // Avoid sending too many requests to the C++ backend
+//                //if (plotTimer.running && canPlot) { return }
 
-                // This crashes sometimes. I don't know why.
-                plotGraph(plotType.currentValue, numPeriods.value)
+//                // This crashes sometimes. I don't know why.
+//                plotGraph(plotType.currentValue, numPeriods.value)
 
-                plotButton.enabled = false
-                plotTimer.start()
-                canPlot = false
-            }
-        }
+//                //plotButton.enabled = false
+//                plotTimer.start()
+//                canPlot = false
+//            }
+//        }
 
         Button {
             text: "Close"

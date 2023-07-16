@@ -24,17 +24,14 @@ public:
     Q_INVOKABLE QVector2D displacementAt(double theta, int planet);
     Q_INVOKABLE QVector3D displacementAt3D(double theta, int planet);
     Q_INVOKABLE QVector3D getMaxDisplacement3D(int index);
-    Q_INVOKABLE QVector<QVector2D> getPtolemaic(int index, int numSamples = 100);
 
+    xt::xarray<double> _getOrbit(int index, int numSamples, bool simplify);
     xt::xarray<double> _getOrbit(double radius, double eccentricity, int numSamples, bool simplify);
-    void cacheOrbit(int index, int numSamples = 100);
 
 signals:
 
 private:
     PlanetData* data;
-    xt::xarray<double> cache;
-
 };
 
 #endif // ORBITS_H

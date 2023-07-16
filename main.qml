@@ -47,6 +47,10 @@ Item {
                 text: "Spirograph"
                 onClicked: openPage("spirograph.qml")
             }
+            Button {
+                text: "Ptolemy"
+                onClicked: openPage("ptolemy.qml")
+            }
         }
     }
 
