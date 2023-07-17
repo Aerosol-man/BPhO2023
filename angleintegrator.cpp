@@ -41,7 +41,7 @@ xt::xtensor<double, 1> AngleIntegrator::interpolate(xt::xtensor<double, 1> &x, x
             // Get the last number less than the sample value
             auto lowerBound = upperBound; lowerBound--;
             // Get floating-point index of the value
-            double index = std::distance(x.begin(), lowerBound);
+            int index = std::distance(x.begin(), lowerBound);
             double remainder = (samplePoints[i] - *lowerBound) / (*upperBound - *lowerBound);
             //linearly interpolate between the lower and upper bound based on the remainder
             out[i] = y[index] + (y[qCeil(index + remainder)] - y[index]) * (remainder);
@@ -59,7 +59,7 @@ xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int per
     auto interpolatedTheta = xt::xtensor<double, 1>::from_shape(shape);
     auto t = xt::xtensor<double, 1>::from_shape(shape);
 
-    xt::xtensor<double, 1> theta = xt::arange(0, TAU, sampleSize);
+    xt::xtensor<double, 1> theta = xt::arange(0.0, TAU, sampleSize);
     //calculate the integrand for each value of theta
     xt::xtensor<double, 1> integral = angleFunction(ecc, theta);
 
@@ -81,10 +81,14 @@ xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int per
 //$
     if (periods > 1)
     {
-        t = xt::repeat(xt::arange<double>(0, periods) * period, periods, 0);
-        interpolatedTheta = xt::repeat(xt::arange<double>(0, periods) * TAU, periods, 0);
-        t += xt::tile(_t, periods);
-        interpolatedTheta += xt::tile(_interpolatedTheta, periods);
+        t = xt::tile(_t, periods);
+        interpolatedTheta = xt::tile(_interpolatedTheta, periods);
+
+        for (int i = 1; i < periods; i++)
+        {
+            xt::view(t, xt::range(i * n, (i + 1) * n)) += i * period;
+            xt::view(interpolatedTheta, xt::range(i * n, (i + 1) * n)) += i * TAU;
+        }
     }
     else {
         t = _t;
