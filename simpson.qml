@@ -101,9 +101,9 @@ Item {
                     }
                     else
                         chart.title = "Orbit angle vs time"
-                    plotGraph(plotType.currentValue, numPeriods.value)
-
                 }
+
+                onCurrentValueChanged: plotGraph(currentValue, numPeriods.value)
             }
         }
 
@@ -161,7 +161,9 @@ Item {
                 id: numPeriods
                 from: 1
                 to: 10
-                value: 1
+                value: 5
+
+                onValueChanged: plotGraph(plotType.currentValue, value)
             }
         }
 

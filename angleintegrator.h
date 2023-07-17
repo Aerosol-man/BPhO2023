@@ -32,8 +32,8 @@ public:
 private:
     PlanetData *data;
 
-    const double sampleSize = 0.001;
-    const int numPoints = 30;
+    const double sampleSize = 0.002;
+    const int numPoints = 40;
 };
 
 #endif // ANGLEINTEGRATOR_H

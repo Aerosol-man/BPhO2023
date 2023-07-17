@@ -82,7 +82,7 @@ xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int per
 
         for (int i = 1; i < periods; i++)
         {
-            xt::view(t, xt::range(i * n, (i + 1) * n)) = xt::view(t, xt::range(0, n)) + t[i * n - 1];
+            xt::view(t, xt::range(i * n, (i + 1) * n)) = xt::view(t, xt::range(0, n)) + period * i;
             xt::view(interpolatedTheta, xt::range(i * n, (i + 1) * n)) = xt::view(interpolatedTheta, xt::range(0, n)) + TAU * i;
         }
     }

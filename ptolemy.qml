@@ -13,13 +13,13 @@ Item {
     property int currentPlanet: 2
 
     function setPlanet(planet) {
-        ptolemyOrbits.cacheOrbit(planet, 100, 5)
+        ptolemyOrbits.cacheOrbit(planet, 100, numOrbits.value)
         currentPlanet = planet
 
-        if (currentPlanet < 4)
-            chartBounds = Qt.rect(-2.2, -2.2, 4.4, 4.4)
+        if (plotPlanet.currentIndex < 4)
+            chart.title = `Inner solar system relative to ${plotPlanet.currentText}`
         else
-            chartBounds = Qt.rect(-40, -40, 80, 80)
+            chart.title = `Outer solar system relative to ${plotPlanet.currentText}`
 
         chart.plotGraph()
     }
@@ -39,6 +39,46 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.margins: 10
+
+        ColumnLayout {
+            Text {
+                text: "Plot Graph for:"
+            }
+            ComboBox {
+                id: plotPlanet
+                textRole: "text"
+                valueRole: "value"
+                currentIndex: 2
+                model: [
+                     {text: "Mercury", value: 0},
+                     {text: "Venus", value: 1},
+                     {text: "Earth", value: 2},
+                     {text: "Mars", value: 3},
+                     {text: "Jupiter", value: 4},
+                     {text: "Saturn", value: 5},
+                     {text: "Uranus", value: 6},
+                     {text: "Neptune", value: 7},
+                     {text: "Pluto", value: 8},
+                ]
+            }
+        }
+
+        ColumnLayout {
+            Text {
+                text: "Number of Orbits:"
+            }
+            SpinBox {
+                id: numOrbits
+                from: 1
+                to: 20
+                value: 5
+            }
+        }
+
+        Button {
+            text: "Plot Graph"
+            onClicked: setPlanet(plotPlanet.currentValue)
+        }
 
         Button {
             text: "Close"
@@ -60,6 +100,7 @@ Item {
 
         function plotGraph() {
             let start, end
+            let newBound = 0
             if (currentPlanet < 4) {
                 for (let i = 0; i < 4; i++) {
                     planetPaths[i].visible = true
@@ -86,8 +127,16 @@ Item {
                 let data = ptolemyOrbits.getOrbit(i)
                 planetPaths[i].clear()
 
+                if (i == currentPlanet) { continue }
+
                 for (let j = 0; j < data.length; j++) {
                     planetPaths[i].append(data[j].x, data[j].y)
+                    if (Math.abs(data[j].x) > newBound) {
+                        newBound = Math.abs(data[j].x)
+                    }
+                    if (Math.abs(data[j].y) > newBound) {
+                        newBound = Math.abs(data[j].y)
+                    }
                 }
             }
 
@@ -95,7 +144,15 @@ Item {
             sunPath.clear()
             for (let i = 0; i < sunData.length; i++) {
                 sunPath.append(sunData[i].x, sunData[i].y)
+                if (Math.abs(sunData[i].x) > newBound) {
+                    newBound = Math.abs(sunData[i].x)
+                }
+                if (Math.abs(sunData[i].y) > newBound) {
+                    newBound = Math.abs(sunData[i].y)
+                }
             }
+            newBound *= 1.1
+            chartBounds = Qt.rect(-newBound, -newBound, newBound * 2, newBound * 2)
         }
 
         ValuesAxis {
@@ -117,6 +174,7 @@ Item {
             name: "sun"
             axisX: xAxis
             axisY: yAxis
+            color: "#000000"
         }
         SplineSeries {
             id: mercuryPath
@@ -176,5 +234,6 @@ Item {
 
     Component.onCompleted: {
         setPlanet(2)
+        sunPath.color = "black"
     }
 }
