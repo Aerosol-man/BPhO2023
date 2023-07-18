@@ -1,7 +1,5 @@
 #include "angleintegrator.h"
 
-#include <QDebug>
-
 AngleIntegrator::AngleIntegrator(QObject *parent, PlanetData *planetData)
     : QObject{parent}
 {
@@ -55,7 +53,7 @@ xt::xtensor<double, 1> AngleIntegrator::interpolate(xt::xtensor<double, 1> &x, x
 //$ simpson.m
 xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int periods, bool simplify, int n)
 {
-    xt::xtensor<double, 1>::shape_type shape = {n * periods};
+    xt::xtensor<double, 1>::shape_type shape = {(unsigned long)(n * periods)};
     auto interpolatedTheta = xt::xtensor<double, 1>::from_shape(shape);
     auto t = xt::xtensor<double, 1>::from_shape(shape);
 

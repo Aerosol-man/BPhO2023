@@ -1,7 +1,5 @@
 #include "linesimplify.h"
 
-#include <QDebug>
-
 //$ visvalingham-whyatt.m
 xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsilon)
 {
@@ -15,16 +13,15 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
     int length = points.shape(0);
 
     //Calculate area covered by the curve
-    auto x = xt::view(out, xt::all(), 0);
-    auto y = xt::view(out, xt::all(), 1);
-    double curveArea = (xt::amax(x)() - xt::amin(x)()) * (xt::amax(y)() - xt::amin(y)());
-    double epsArea = curveArea * epsilon;
+    auto max = xt::amax(out, {0});
+    auto min = xt::amin(out, {0});
+    double epsArea = (max(0) - min(0)) * (max(1) - min(1)) * epsilon;
 
     while(length > 3)
     {
         //Store the index & area of the point with the lowest efective area
         int minIndex = -1;
-        double minArea = curveArea;
+        double minArea = epsArea;
 
         for (int i = 1; i < length - 1; i++)
         {
@@ -39,7 +36,7 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
             }
         }
 
-        if (minArea < epsArea)
+        if (minIndex != -1)
         {
             //exclude the point
             out = xt::view(out, xt::drop(minIndex), xt::all());
@@ -53,3 +50,50 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
     return out;
 }
 //$ visvalingham-whyatt.m
+
+QVector<QVector2D> LineSimplify::vwReduce(QVector<QVector2D> points, double epsilon)
+{
+    QVector<QVector2D> out = points;
+    double bounds[4] = {INFINITY, INFINITY, -INFINITY, -INFINITY};
+    for (int i = 0; i < points.size(); i++)
+    {
+        if (points[i].x() < bounds[0]) { bounds[0] = points[i].x(); }
+        else if (points[i].x() > bounds[2]) { bounds[2] = points[i].x(); }
+        if (points[i].y() < bounds[1]) { bounds[1] = points[i].y(); }
+        else if (points[i].y() > bounds[3]) { bounds[3] = points[i].y(); }
+    }
+
+    double epsArea = epsilon * (bounds[2] - bounds[0]) * (bounds[3] - bounds[1]);
+    int length = points.size();
+
+    while (length > 3)
+    {
+        int minIndex = -1;
+        double minArea = epsArea;
+
+        for (int i = 1; i < length - 1; i++)
+        {
+            double area = std::abs((out[i - 1].x() - out[i + 1].x()) * (out[i].y() - out[i - 1].y())
+                                   - (out[i - 1].x() - out[i].x()) * (out[i + 1].y() - out[i - 1].y())) * 0.5 ;
+
+            if (area < minArea)
+            {
+                minArea = area;
+                minIndex = i;
+            }
+        }
+
+        if (minIndex != -1)
+        {
+            out.removeAt(minIndex);
+            length--;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    out.squeeze();
+    return out;
+}

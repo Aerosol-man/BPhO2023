@@ -1,5 +1,7 @@
 #include "ptolemy.h"
 
+#include <QDebug>
+
 Ptolemy::Ptolemy(QObject *parent, PlanetData *planetData, Orbits *orb, AngleIntegrator *intg)
     : QObject{parent}
 {
@@ -57,7 +59,7 @@ void Ptolemy::extendCache(int index, int oldPeriods, int newPeriods, int numSamp
                                                               numSamples);
     xt::xtensor<double, 1> angles = xt::col(timeAngles, 1);
 
-    xt::xtensor<double, 1>::shape_type shape({newPeriods * numSamples});
+    xt::xtensor<double, 1>::shape_type shape({(unsigned long)(newPeriods * numSamples)});
     auto temp = xt::xtensor<double, 1>::from_shape(shape);
 
     xt::view(temp, xt::range(0, tCache.shape(0))) = tCache;
@@ -77,7 +79,7 @@ void Ptolemy::reduceCache(int newPeriods, int numSamples)
     cache.resize(newPeriods * numSamples);
 }
 
-QVector<QVector2D> Ptolemy::getOrbit(int index, int numSamples)
+QVector<QVector2D> Ptolemy::getOrbit(int index, int numSamples, bool simplify)
 {
     QVector<QVector2D> out;
 
@@ -104,6 +106,11 @@ QVector<QVector2D> Ptolemy::getOrbit(int index, int numSamples)
         {
             out.append(cache[i] * -1);
         }
+    }
+
+    if (simplify)
+    {
+        out = LineSimplify::vwReduce(out, 0.00005);
     }
 
     return out;

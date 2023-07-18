@@ -1,4 +1,4 @@
-CONFIG += qmltypes
+CONFIG += qmltypes c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -19,10 +19,10 @@ HEADERS += \
     angleintegrator.h \
     linegenerator.h \
     linesimplify.h \
-    math.h \
     orbits.h \
     planetdata.h \
     ptolemy.h \
+    simplemath.h \
     simulator.h \
     xtensor.hpp
 

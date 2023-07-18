@@ -10,6 +10,7 @@
 #include "planetdata.h"
 #include "orbits.h"
 #include "angleintegrator.h"
+#include "linesimplify.h"
 
 struct CacheInfo
 {
@@ -24,7 +25,7 @@ class Ptolemy : public QObject
 public:
     explicit Ptolemy(QObject *parent = nullptr);
     Ptolemy(QObject *parent = nullptr, PlanetData *data = nullptr, Orbits *orbits = nullptr, AngleIntegrator *integrator = nullptr);
-    Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100);
+    Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100, bool simplify = false);
     Q_INVOKABLE void cacheOrbit(int index, int numSamples = 100, int periods = 1);
 
 private:

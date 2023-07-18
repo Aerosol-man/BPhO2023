@@ -9,7 +9,7 @@
 #include <xtensor.hpp>
 #include "linesimplify.h"
 
-#include "math.h"
+#include "simplemath.h"
 
 class Orbits : public QObject
 {

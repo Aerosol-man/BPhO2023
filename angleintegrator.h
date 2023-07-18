@@ -13,7 +13,7 @@
 
 #include "planetdata.h"
 #include "linesimplify.h"
-#include "math.h"
+#include "simplemath.h"
 
 
 class AngleIntegrator : public QObject

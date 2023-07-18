@@ -11,9 +11,10 @@ Item {
     property var planetPaths: [mercuryPath, venusPath, earthPath, marsPath, jupiterPath, saturnPath, uranusPath, neptunePath, plutoPath]
     property rect chartBounds: Qt.rect(-40, -40, 80, 80)
     property int currentPlanet: 2
+    property int numSamples: 100
 
     function setPlanet(planet) {
-        ptolemyOrbits.cacheOrbit(planet, 100, numOrbits.value)
+        ptolemyOrbits.cacheOrbit(planet, numSamples, numOrbits.value)
         currentPlanet = planet
 
         if (plotPlanet.currentIndex < 4)
@@ -124,7 +125,7 @@ Item {
 
 
             for (let i = start; i < end; i++) {
-                let data = ptolemyOrbits.getOrbit(i)
+                let data = ptolemyOrbits.getOrbit(i, numSamples, true)
                 planetPaths[i].clear()
 
                 if (i == currentPlanet) { continue }
@@ -140,7 +141,7 @@ Item {
                 }
             }
 
-            let sunData = ptolemyOrbits.getOrbit(9)
+            let sunData = ptolemyOrbits.getOrbit(9, numSamples, true)
             sunPath.clear()
             for (let i = 0; i < sunData.length; i++) {
                 sunPath.append(sunData[i].x, sunData[i].y)

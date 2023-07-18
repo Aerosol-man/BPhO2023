@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <xtensor.hpp>
-#include "math.h"
+#include "simplemath.h"
 #include <QVector>
 #include <QVector3D>
 #include <qmath.h>
