@@ -30,6 +30,7 @@ QVector<QVector4D> LineGenerator::lines(int p1, int p2, int periods, int samples
     //Find the angle of the inner planet for each t
     xt::xtensor<double, 1> interpInnerAngles = integrator->interpolate(innerTimes, innerAngles, wrappedTimes);
 
+    out.reserve(t.shape(0));
     for (int i = 0; i < t.shape(0); i++) {
         QVector2D start = orbits->displacementAt(outerAngles(i), outer);
         QVector2D end = orbits->displacementAt(interpInnerAngles(i), inner);

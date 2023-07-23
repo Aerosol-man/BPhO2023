@@ -141,6 +141,5 @@ Item {
 
     Component.onCompleted: {
         plotData(0);
-        print(platform)
     }
 }

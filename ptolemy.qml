@@ -5,13 +5,13 @@ import QtCharts
 
 Item {
     id: ptolemy
-    width: 640
-    height: 480
+    width: (platform === 0) ? 640 : 800
+    height: (platform === 0) ? 480 : 600
 
     property var planetPaths: [mercuryPath, venusPath, earthPath, marsPath, jupiterPath, saturnPath, uranusPath, neptunePath, plutoPath]
     property rect chartBounds: Qt.rect(-40, -40, 80, 80)
     property int currentPlanet: 2
-    property int numSamples: 100
+    property int numSamples: 50
 
     function setPlanet(planet) {
         ptolemyOrbits.cacheOrbit(planet, numSamples, numOrbits.value)
@@ -97,7 +97,6 @@ Item {
         width: 640
         height: 480
         legend.visible: true
-        antialiasing: false
 
         function plotGraph() {
             let start, end

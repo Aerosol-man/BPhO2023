@@ -29,8 +29,10 @@ int main(int argc, char *argv[])
     // in desktop environments.
 #ifdef Q_OS_WIN
     QString extraImportPath(QStringLiteral("%1/../../../../%2"));
+    int PLATFORM_NUM = 0;
 #else
     QString extraImportPath(QStringLiteral("%1/../../../%2"));
+    int PLATFORM_NUM = 1;
 #endif
     viewer.engine()->addImportPath(extraImportPath.arg(QGuiApplication::applicationDirPath(),
                                       QString::fromLatin1("qml")));
@@ -42,6 +44,9 @@ int main(int argc, char *argv[])
     viewer.show();
 
     QQmlContext* rootContext = viewer.engine()->rootContext();
+
+    rootContext->setContextProperty("platform", PLATFORM_NUM);
+
     rootContext->setContextProperty("planetData", planetData.data());
     rootContext->setContextProperty("orbits", orbits.data());
     rootContext->setContextProperty("angleIntegrator", angleIntegrator.data());

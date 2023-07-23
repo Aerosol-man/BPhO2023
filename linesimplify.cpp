@@ -1,7 +1,7 @@
 #include "linesimplify.h"
 
 //$ visvalingham-whyatt.m
-xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsilon)
+xt::xtensor<double, 2> LineSimplify::vwReduce(xt::xarray<double> points, double epsilon)
 {
     /*
     Implementation of the Visvalingham-Whyatt line simplification algorithm
@@ -9,13 +9,14 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
     epsilon - minimum area for each triangle as a percentage of the total area.
               Controls the level of detail produced
     */
-    xt::xarray<double> out = points;
+    xt::xtensor<double, 2> out = points;
     int length = points.shape(0);
 
     //Calculate area covered by the curve
     auto max = xt::amax(out, {0});
     auto min = xt::amin(out, {0});
     double epsArea = (max(0) - min(0)) * (max(1) - min(1)) * epsilon;
+    int start = 1;
 
     while(length > 3)
     {
@@ -23,16 +24,23 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
         int minIndex = -1;
         double minArea = epsArea;
 
-        for (int i = 1; i < length - 1; i++)
+        for (int i = start; i < length - 1; i++)
         {
             //Calulate the area of the triangle
             double area = std::abs((out(i - 1, 0) - out(i + 1, 0)) * (out(i, 1) - out(i - 1, 1))
-                                   - (out(i - 1, 0) - out(i, 0)) * (out(i + 1, 1) - out(i - 1, 1))) * 0.5 ;
+                                   - (out(i - 1, 0) - out(i, 0)) * (out(i + 1, 1) - out(i - 1, 1))) * 0.5;
 
-            if (area < minArea)
+            if (area < epsArea)
             {
-                minIndex = i;
-                minArea = area;
+                if (area < minArea)
+                {
+                    minIndex = i;
+                    minArea = area;
+                }
+            }
+            else if (minIndex == -1)
+            {
+                start = i;
             }
         }
 
@@ -47,6 +55,7 @@ xt::xarray<double> LineSimplify::vwReduce(xt::xarray<double> points, double epsi
             break;
         }
     }
+
     return out;
 }
 //$ visvalingham-whyatt.m
@@ -65,21 +74,29 @@ QVector<QVector2D> LineSimplify::vwReduce(QVector<QVector2D> points, double epsi
 
     double epsArea = epsilon * (bounds[2] - bounds[0]) * (bounds[3] - bounds[1]);
     int length = points.size();
+    int start = 1;
 
     while (length > 3)
     {
         int minIndex = -1;
         double minArea = epsArea;
 
-        for (int i = 1; i < length - 1; i++)
+        for (int i = start; i < length - 1; i++)
         {
             double area = std::abs((out[i - 1].x() - out[i + 1].x()) * (out[i].y() - out[i - 1].y())
                                    - (out[i - 1].x() - out[i].x()) * (out[i + 1].y() - out[i - 1].y())) * 0.5 ;
 
-            if (area < minArea)
+            if (area < epsArea)
             {
-                minArea = area;
-                minIndex = i;
+                if (area < minArea)
+                {
+                    minArea = area;
+                    minIndex = i;
+                }
+            }
+            else if (minIndex == -1)
+            {
+                start = i;
             }
         }
 

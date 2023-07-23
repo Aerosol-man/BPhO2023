@@ -5,8 +5,8 @@ import QtQuick.Layouts
 
 Item {
     id: solarSystem2d
-    width: 640
-    height: 480
+    width: (platform === 0) ? 640 : 800
+    height: (platform === 0) ? 480 : 600
     anchors.centerIn: parent
 
     signal close

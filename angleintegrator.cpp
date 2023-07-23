@@ -99,7 +99,7 @@ xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int per
     if (simplify)
     {
 
-        xt::xarray<double> _out = LineSimplify::vwReduce(out, 0.01);
+        xt::xtensor<double, 2> _out = LineSimplify::vwReduce(out, 0.01);
         return _out;
     }
 
@@ -111,6 +111,7 @@ QVector<QVector2D> AngleIntegrator::fromValues(double period, double ecc, int pe
     QVector<QVector2D> out;
     xt::xarray<double> theta = integrate(period, ecc, periods, simplify, numPoints);
 
+    out.reserve(theta.shape(0));
     for (int i = 0; i < theta.shape(0); i++)
     {
         out.append(QVector2D(theta(i, 0), theta(i, 1)));

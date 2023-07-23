@@ -11,7 +11,7 @@
 class LineSimplify
 {
 public:
-    static xt::xarray<double> vwReduce(xt::xarray<double> points, double epsilon);
+    static xt::xtensor<double, 2> vwReduce(xt::xarray<double> points, double epsilon);
     static QVector<QVector2D> vwReduce(QVector<QVector2D> points, double epsilon);
 };
 

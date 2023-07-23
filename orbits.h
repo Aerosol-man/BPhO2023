@@ -25,8 +25,8 @@ public:
     Q_INVOKABLE QVector3D displacementAt3D(double theta, int planet);
     Q_INVOKABLE QVector3D getMaxDisplacement3D(int index);
 
-    xt::xarray<double> _getOrbit(int index, int numSamples, bool simplify);
-    xt::xarray<double> _getOrbit(double radius, double eccentricity, int numSamples, bool simplify);
+    xt::xtensor<double, 2> _getOrbit(int index, int numSamples, bool simplify);
+    xt::xtensor<double, 2> _getOrbit(double radius, double eccentricity, int numSamples, bool simplify);
 
 signals:
 

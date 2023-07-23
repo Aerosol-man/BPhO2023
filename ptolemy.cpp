@@ -110,7 +110,7 @@ QVector<QVector2D> Ptolemy::getOrbit(int index, int numSamples, bool simplify)
 
     if (simplify)
     {
-        out = LineSimplify::vwReduce(out, 0.00005);
+        out = LineSimplify::vwReduce(out, 0.0001);
     }
 
     return out;

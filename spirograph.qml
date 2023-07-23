@@ -5,8 +5,8 @@ import QtQuick.Layouts
 Item {
     id: spirograph
     signal close
-    width: 640
-    height: 480
+    width: (platform === 0) ? 640 : 800
+    height: (platform === 0) ? 480 : 600
 
     property var plotSize
     property real scale: .475

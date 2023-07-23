@@ -49,22 +49,22 @@ QVector3D Orbits::getMaxDisplacement3D(int index)
     return QVector3D(_getDistance(radius, eccentricity, 0.0), _getDistance(radius, eccentricity, PI / 2), _getDistance(radius, eccentricity, 0.0));
 }
 
-xt::xarray<double> Orbits::_getOrbit(int index, int numSamples, bool simplify)
+xt::xtensor<double, 2> Orbits::_getOrbit(int index, int numSamples, bool simplify)
 {
     return _getOrbit(data->_distances[index], data->_eccentricities[index], numSamples, simplify);
 }
 
-xt::xarray<double> Orbits::_getOrbit(double radius, double eccentricity, int numSamples, bool simplify)
+xt::xtensor<double, 2> Orbits::_getOrbit(double radius, double eccentricity, int numSamples, bool simplify)
 {
     xt::xtensor<double, 1> theta = xt::linspace(0.0, TAU, numSamples);
 
     xt::xtensor<double, 1> distances = getDistance(radius, eccentricity, theta);
-    xt::xarray<double> displacements = xt::stack(xt::xtuple(distances * xt::cos(theta), distances * xt::sin(theta)));
+    xt::xtensor<double, 2> displacements = xt::stack(xt::xtuple(distances * xt::cos(theta), distances * xt::sin(theta)));
     displacements = xt::rot90(displacements);
 
     if (simplify)
     {
-        xt::xarray<double> _displacements = LineSimplify::vwReduce(displacements, 0.0001);
+        xt::xtensor<double, 2> _displacements = LineSimplify::vwReduce(displacements, 0.0001);
         return _displacements;
     }
     else
@@ -77,8 +77,9 @@ QVector<QVector2D> Orbits::getOrbit(int index, int numSamples, bool simplify)
 {
     QVector<QVector2D> out;
 
-    xt::xarray<double> displacements = _getOrbit(index, numSamples, simplify);
+    xt::xtensor<double, 2> displacements = _getOrbit(index, numSamples, simplify);
 
+    out.reserve(displacements.shape(0));
     for (int i = 0; i < displacements.shape(0); i++)
     {
         out.append(QVector2D(displacements(i, 0), displacements(i, 1)));
@@ -91,15 +92,16 @@ QVector<QVector3D> Orbits::getOrbit3D(int index, int numSamples, bool simplify)
 {
     QVector<QVector3D> out;
 
-    xt::xarray<double> points2d = _getOrbit(index, numSamples, simplify);
+    xt::xtensor<double, 2> points2d = _getOrbit(index, numSamples, simplify);
 
     double inc = qDegreesToRadians(data->_inclinations[index]);
 
-    xt::xarray<double> z = xt::eval(xt::col(points2d, 1));
+    xt::xtensor<double, 1> z = xt::col(points2d, 1);
 
     xt::col(points2d, 1) *= qSin(inc);
     z *= qCos(inc);
 
+    out.reserve(points2d.shape(0));
     for (int i = 0; i < points2d.shape(0); i++)
     {
         out.append(QVector3D(points2d(i, 0), points2d(i, 1), z(i)));
