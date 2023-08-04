@@ -5,8 +5,8 @@ import QtCharts
 
 Item {
     id: ptolemy
-    width: (platform === 0) ? 640 : 800
-    height: (platform === 0) ? 480 : 600
+    width: 800
+    height: 600
 
     property var planetPaths: [mercuryPath, venusPath, earthPath, marsPath, jupiterPath, saturnPath, uranusPath, neptunePath, plutoPath]
     property rect chartBounds: Qt.rect(-40, -40, 80, 80)
@@ -35,7 +35,7 @@ Item {
 
     ColumnLayout {
         id: controlPanel
-        width: 100
+        width: 200
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom

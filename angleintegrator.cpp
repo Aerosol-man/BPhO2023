@@ -51,7 +51,7 @@ xt::xtensor<double, 1> AngleIntegrator::interpolate(xt::xtensor<double, 1> &x, x
 //$ interpolate.m
 
 //$ simpson.m
-xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int periods, bool simplify, int n)
+xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int periods, bool simplify, int n, double sampleSize)
 {
     xt::xtensor<double, 1>::shape_type shape = {(unsigned long)(n * periods)};
     auto interpolatedTheta = xt::xtensor<double, 1>::from_shape(shape);
@@ -109,7 +109,7 @@ xt::xarray<double> AngleIntegrator::integrate(double period, double ecc, int per
 QVector<QVector2D> AngleIntegrator::fromValues(double period, double ecc, int periods, bool simplify)
 {
     QVector<QVector2D> out;
-    xt::xarray<double> theta = integrate(period, ecc, periods, simplify, numPoints);
+    xt::xarray<double> theta = integrate(period, ecc, periods, simplify);
 
     out.reserve(theta.shape(0));
     for (int i = 0; i < theta.shape(0); i++)

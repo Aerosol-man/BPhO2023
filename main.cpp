@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
     QScopedPointer<PlanetData> planetData(new PlanetData);
     QScopedPointer<Orbits> orbits(new Orbits(nullptr, planetData.data()));
     QScopedPointer<AngleIntegrator> angleIntegrator(new AngleIntegrator(nullptr, planetData.data()));
-    QScopedPointer<LineGenerator> lineGenerator(new LineGenerator(nullptr, planetData.data(), orbits.data(), angleIntegrator.data()));
-    QScopedPointer<Ptolemy> ptolemy(new Ptolemy(nullptr, planetData.data(), orbits.data(), angleIntegrator.data()));
+    QScopedPointer<LineGenerator> lineGenerator(new LineGenerator(nullptr, planetData.data(), orbits.data()));
+    QScopedPointer<Ptolemy> ptolemy(new Ptolemy(nullptr, planetData.data(), orbits.data()));
 
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);

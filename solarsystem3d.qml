@@ -4,8 +4,8 @@ import QtQuick.Layouts
 
 Item {
     id: solarSystem3d
-    width: (platform === 0) ? 640 : 800
-    height: (platform === 0) ? 480 : 600
+    width: 800
+    height: 600
     anchors.centerIn: parent
 
     signal close
@@ -227,13 +227,18 @@ Item {
         }
     }
 
-    Popup {
-        id: popup
+    Control {
         x: 10
         y: 10
-        width: 150
-        height: 100
-        closePolicy: Popup.NoAutoClose
+        width: 180
+        height: 120
+        background: Rectangle {
+            radius: 5
+            border.color: "gray"
+            border.width: 5
+            color: "white"
+        }
+        padding: 8
 
         ColumnLayout {
             Label {
@@ -263,7 +268,6 @@ Item {
         y: parent.height - 30
         text: "Close"
         onClicked: {
-            popup.close()
             solarSystem3d.parent.closePage()
         }
     }
@@ -277,6 +281,5 @@ Item {
             planetPaths[1].push(orbits.getOrbit3D(i, 100, true).map(to2D).map(fitToScreen))
         }
         setPlanetView(0)
-        popup.open()
     }
 }

@@ -5,8 +5,8 @@ import QtQuick.Controls
 
 Item {
     id: simpson
-    width: (platform === 0) ? 640 : 800
-    height: (platform === 0) ? 480 : 600
+    width: 800
+    height: 600
     anchors.centerIn: parent
 
     signal close
@@ -67,7 +67,7 @@ Item {
 
     ColumnLayout {
         id: controlPanel
-        width: 200
+        width: 300
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom

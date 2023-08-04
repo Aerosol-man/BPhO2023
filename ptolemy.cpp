@@ -1,13 +1,10 @@
 #include "ptolemy.h"
 
-#include <QDebug>
-
-Ptolemy::Ptolemy(QObject *parent, PlanetData *planetData, Orbits *orb, AngleIntegrator *intg)
+Ptolemy::Ptolemy(QObject *parent, PlanetData *planetData, Orbits *orb)
     : QObject{parent}
 {
     data = planetData;
     orbits = orb;
-    integrator = intg;
 
     cacheInfo.cachedPlanet = -1;
 }
@@ -36,7 +33,7 @@ void Ptolemy::newCache(int index, int numSamples, int periods)
 {
     double ecc = data->_eccentricities[index];
 
-    xt::xtensor<double, 2> timeAngles = integrator->integrate(data->_orbitalPeriods[index], ecc, periods, false, numSamples);
+    xt::xtensor<double, 2> timeAngles = AngleIntegrator::integrate(data->_orbitalPeriods[index], ecc, periods, false, numSamples);
 
     tCache = xt::col(timeAngles, 0);
 
@@ -52,7 +49,7 @@ void Ptolemy::newCache(int index, int numSamples, int periods)
 
 void Ptolemy::extendCache(int index, int oldPeriods, int newPeriods, int numSamples)
 {
-    xt::xtensor<double, 2> timeAngles = integrator->integrate(data->_orbitalPeriods[index],
+    xt::xtensor<double, 2> timeAngles = AngleIntegrator::integrate(data->_orbitalPeriods[index],
                                                               data->_eccentricities[index],
                                                               newPeriods - oldPeriods,
                                                               false,
@@ -88,12 +85,12 @@ QVector<QVector2D> Ptolemy::getOrbit(int index, int numSamples, bool simplify)
         double ecc = data->_eccentricities[index];
         double period = data->_orbitalPeriods[index];
 
-        xt::xtensor<double, 2> timeAngles = integrator->integrate(period, ecc, 1, false, numSamples);
+        xt::xtensor<double, 2> timeAngles = AngleIntegrator::integrate(period, ecc, 1, false, numSamples);
         xt::xtensor<double, 1> x = xt::col(timeAngles, 0);
         xt::xtensor<double, 1> y = xt::col(timeAngles, 1);
         xt::xtensor<double, 1> t = xt::fmod(tCache, period);
 
-        xt::xtensor<double, 1> theta = integrator->interpolate(x, y, t);
+        xt::xtensor<double, 1> theta = AngleIntegrator::interpolate(x, y, t);
 
         for (int i = 0; i < theta.shape(0); i++)
         {

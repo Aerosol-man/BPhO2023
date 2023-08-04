@@ -26,14 +26,11 @@ public:
     Q_INVOKABLE QVector<QVector2D> fromPlanet(int index, int periods = 1, bool simpify = false);
     Q_INVOKABLE QVector<QVector2D> fromValues(double period, double ecc, int periods = 1, bool simplify = false);
 
-    xt::xarray<double> integrate(double period, double ecc, int periods, bool simplify, int n);
-    xt::xtensor<double, 1> interpolate(xt::xtensor<double, 1> &x, xt::xtensor<double, 1> &y, xt::xtensor<double, 1> &samplePoints);
+    static xt::xarray<double> integrate(double period, double ecc, int periods, bool simplify, int n = 40, double sampleSize = 0.001);
+    static xt::xtensor<double, 1> interpolate(xt::xtensor<double, 1> &x, xt::xtensor<double, 1> &y, xt::xtensor<double, 1> &samplePoints);
 
 private:
     PlanetData *data;
-
-    const double sampleSize = 0.001;
-    const int numPoints = 40;
 };
 
 #endif // ANGLEINTEGRATOR_H

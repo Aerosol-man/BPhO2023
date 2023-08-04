@@ -5,8 +5,8 @@ import QtQuick.Layouts
 
 Item {
     id: solarSystem2d
-    width: (platform === 0) ? 640 : 800
-    height: (platform === 0) ? 480 : 600
+    width: 800
+    height: 600
     anchors.centerIn: parent
 
     signal close
@@ -82,7 +82,7 @@ Item {
 
     ColumnLayout {
         id: controlPanel
-        width: 100
+        width: 200
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.bottom: parent.bottom

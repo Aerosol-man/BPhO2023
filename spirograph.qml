@@ -5,8 +5,8 @@ import QtQuick.Layouts
 Item {
     id: spirograph
     signal close
-    width: (platform === 0) ? 640 : 800
-    height: (platform === 0) ? 480 : 600
+    width: 800
+    height: 600
 
     property var plotSize
     property real scale: .475
@@ -58,7 +58,7 @@ Item {
 
     ColumnLayout {
         id: controlPanel
-        width: 200
+        width: 300
         anchors.left: parent.left
         spacing: 10
 

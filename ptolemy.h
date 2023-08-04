@@ -24,7 +24,7 @@ class Ptolemy : public QObject
     Q_OBJECT
 public:
     explicit Ptolemy(QObject *parent = nullptr);
-    Ptolemy(QObject *parent = nullptr, PlanetData *data = nullptr, Orbits *orbits = nullptr, AngleIntegrator *integrator = nullptr);
+    Ptolemy(QObject *parent = nullptr, PlanetData *data = nullptr, Orbits *orbits = nullptr);
     Q_INVOKABLE QVector<QVector2D> getOrbit(int index, int numSamples = 100, bool simplify = false);
     Q_INVOKABLE void cacheOrbit(int index, int numSamples = 100, int periods = 1);
 

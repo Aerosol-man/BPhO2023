@@ -5,8 +5,8 @@ import QtQuick.Layouts
 
 Item {
     id: kepler
-    width: (platform === 0) ? 640 : 800
-    height: (platform === 0) ? 480 : 600
+    width: 800
+    height: 600
     anchors.centerIn: parent
 
     signal close
@@ -141,6 +141,5 @@ Item {
 
     Component.onCompleted: {
         plotData(0);
-        print(platform)
     }
 }
