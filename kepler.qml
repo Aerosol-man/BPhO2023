@@ -26,6 +26,7 @@ Item {
             }
             xAxis.max = 260;
             xAxis.titleText = "(Semi-major axis)^1.5 in AU";
+            lineData.name = "y = x"
         }
         else {
             for (let i = 0; i < 9; i++) {
@@ -36,20 +37,22 @@ Item {
             }
             xAxis.max = 40;
             xAxis.titleText = "Semi-major axis in AU";
+            lineData = "y = x^1.5"
         }
     }
 
     ColumnLayout { id: controlPanel
-        width: 100
+        width: 140
         anchors.left: parent.left
         anchors.top: parent.top
         //anchors.bottom: parent.bottom
-        anchors.margins: 10
+        anchors.margins: 5
 
         spacing: 5
 
         Text { text: "Graph Type:" }
         RadioButton {
+            font.pointSize: 10
             checked: true
             text: "Linear"
             onCheckedChanged: {
@@ -59,6 +62,7 @@ Item {
             }
         }
         RadioButton {
+            font.pointSize: 10
             text: "Polynomial"
             onCheckedChanged: {
                 if (checked) {
@@ -102,7 +106,7 @@ Item {
                 max: 250
             }
 
-            LineSeries {
+            SplineSeries {
                 id: lineData
                 name: "y = x"
                 axisX: xAxis

@@ -1,5 +1,6 @@
 import QtQuick
 //import QtQuick.Window 2.15
+import QtQuick.Layouts
 import QtQuick.Controls
 import QtCharts
 
@@ -15,41 +16,56 @@ Item {
         currentPage.model.set(0, {component: url})
     }
 
-    Item {
-        id: mainMenu
-        width: 320
-        height: 320
-        anchors.centerIn: parent
 
-        Grid {
-            columns: 3
-            spacing: 2
+    ColumnLayout {
+        id: mainMenu
+        anchors.fill: parent
+        width: 800
+        height: 600
+
+        Label {
+            id: title
+            Layout.alignment: Qt.AlignHCenter
+            //Layout.fillWidth: true
+            text: "Solar System Model"
+            font.pointSize: 32
+        }
+
+        Column {
+//            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            leftPadding: 30
+            spacing: 10
 
             Button {
-                text: "Kepler Graph"
+                text: "Verifying Kepler's Third Law"
                 onClicked: openPage("kepler.qml")
             }
 
             Button {
-                text: "2D Solar system"
+                text: "2D Solar System Animation"
                 onClicked: openPage("solarsystem2d.qml")
             }
-
             Button {
-                text: "Simpson's rule"
-                onClicked: openPage("simpson.qml")
-            }
-            Button {
-                text: "3D Solar system"
+                text: "3D Solar System Animation"
                 onClicked: openPage("solarsystem3d.qml")
             }
             Button {
-                text: "Spirograph"
+                text: "Calculating Orbit Angle vs Time"
+                onClicked: openPage("simpson.qml")
+            }
+            Button {
+                text: "Solar System Spirographs"
                 onClicked: openPage("spirograph.qml")
             }
             Button {
-                text: "Ptolemy"
+                text: "Ptolemaic Orbits"
                 onClicked: openPage("ptolemy.qml")
+            }
+            Button {
+                text: "Gravity Simulator"
+                onClicked: openPage("verlet.qml")
             }
         }
     }

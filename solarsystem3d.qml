@@ -14,6 +14,7 @@ Item {
     property real animationSpeed: 0.01
     property var planetPaths: [[],[]]
     property var colours: ["orange", "red", "pink", "aqua", "cyan", "lawngreen", "salmon", "lightblue", "khaki"]
+    property var planetNames: ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto']
     property rect bounds: Qt.rect(-2.2, -2.2, 4.4, 4.4)
     property real scale: 0.75
     property int planetView: 0
@@ -26,6 +27,11 @@ Item {
         return Qt.vector2d(p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t)
     }
 
+    function changeAnimationSpeed(amount) {
+        animationSpeed *= amount
+        animationSpeed = Math.min(Math.max(animationSpeed, 0.005), 2)
+        speedText.text = `x${animationSpeed.toFixed(3)}`
+    }
 
     function to2D(point) {
         const ROOT_3 = Math.sqrt(3)
@@ -81,7 +87,7 @@ Item {
 
         //Nasty Hardcoded values
         ctx.strokeStyle = "gray"
-        for (let i = 0; i < 5; i++){
+        for (let i = 0; i < 5; i++) {
             let t = i / 5
             let end
             ctx.beginPath()
@@ -117,17 +123,17 @@ Item {
             ctx.stroke()
         }
 
-//        ctx.fillText("x", points[5].x - 5, points[5].y + 5)
-//        ctx.fillText("y", points[0].x, points[0].y - 5)
-//        ctx.fillText("z", points[7].x + 5, points[7].y + 5)
+        ctx.fillText("x/AU", lerp(points[5].x, points[6].x, 0.25), lerp(points[5].y, points[6].y, 0.6))
+        ctx.fillText("z/AU", points[7].x + 30, lerp(points[7].y, points[3].y, 0.5))
+        ctx.fillText("y/AU", lerp(points[6].x, points[7].x, 0.6), lerp(points[6].y, points[7].y, 0.25))
     }
 
     function drawBowTop(ctx) {
         const lines = [
-                        [0, 1],
-                        [1, 2],
-                        [1, 3]
-                    ]
+            [0, 1],
+            [1, 2],
+            [1, 3]
+        ]
         let rectBounds
 
         if (planetView == 0)
@@ -136,11 +142,11 @@ Item {
             rectBounds = orbits.getMaxDisplacement3D(8)
 
         const points = [
-                    Qt.vector3d(-rectBounds.x, rectBounds.y, rectBounds.z),
-                    Qt.vector3d(-rectBounds.x, rectBounds.y, -rectBounds.z),
-                    Qt.vector3d(rectBounds.x, rectBounds.y, -rectBounds.z),
-                    Qt.vector3d(-rectBounds.x, -rectBounds.y, -rectBounds.z)
-                ].map(to2D).map(fitToScreen)
+            Qt.vector3d(-rectBounds.x, rectBounds.y, rectBounds.z),
+            Qt.vector3d(-rectBounds.x, rectBounds.y, -rectBounds.z),
+            Qt.vector3d(rectBounds.x, rectBounds.y, -rectBounds.z),
+            Qt.vector3d(-rectBounds.x, -rectBounds.y, -rectBounds.z)
+        ].map(to2D).map(fitToScreen)
 
         ctx.strokeStyle = "white"
 
@@ -172,6 +178,12 @@ Item {
             ctx.stroke()
         }
     }
+
+    function drawPlanetName(ctx, planet, position) {
+        ctx.fillStyle = colours[planet]
+        ctx.fillRect(600, 30 + position * 20, 10, 10)
+        ctx.fillText(planetNames[planet], 620, 40 + position * 20)
+    }
     
     function setPlanetView(newValue) {
         if (newValue === 0) {
@@ -200,13 +212,17 @@ Item {
             drawBox(ctx)
 
             let start = 0
-            if (planetView === 1)
+            let end = 4
+            if (planetView === 1) {
                 start = 4
+                end = 9
+            }
 
-            for (let i = start; i < 9; i++) {
+            for (let i = start; i < end; i++) {
                 ctx.fillStyle = colours[i]
                 ctx.strokeStyle = colours[i]
                 drawPlanet(ctx, i, animationProgress[i])
+                drawPlanetName(ctx, i, i - start)
             }
 
             drawBowTop(ctx)
@@ -228,24 +244,30 @@ Item {
     }
 
     Control {
+        id: controlPanel
         x: 10
         y: 10
         width: 180
-        height: 120
+        height: 200
         background: Rectangle {
             radius: 5
             border.color: "gray"
             border.width: 5
             color: "white"
         }
-        padding: 8
+
+        property bool shown: true
 
         ColumnLayout {
             Label {
+                Layout.topMargin: 10
+                Layout.leftMargin: 20
                 text: "Control Animation:"
             }
-            Label { text: "Planet view:" }
+            Label { text: "Planet view:"; Layout.leftMargin: 20; Layout.topMargin: 5}
             RadioButton {
+                Layout.leftMargin: 20
+                font.pointSize: 10
                 text: "Inner planets"
                 checked: true
                 onClicked: {
@@ -254,10 +276,60 @@ Item {
                 }
             }
             RadioButton {
+                Layout.leftMargin: 20
+                font.pointSize: 10
                 text: "Outer planets"
                 onClicked: {
                     if (checked)
                         setPlanetView(1)
+                }
+            }
+            Label { text: "Animation speed:"; Layout.leftMargin: 20; font.pointSize: 10 }
+            RowLayout {
+                Layout.leftMargin: 20
+                width: 150
+
+                Button {
+                    font.pointSize: 10
+                    text: "-"
+                    onClicked: {
+                        changeAnimationSpeed(.75)
+                    }
+                }
+                Label {id:speedText; text: `x${animationSpeed}`; font.pointSize: 7 }
+                Button {
+                    font.pointSize: 10
+                    text: "+"
+                    onClicked: {
+                        changeAnimationSpeed(1.25)
+                    }
+                }
+            }
+            Button {
+                id: showButton
+                Layout.leftMargin: 20
+                font.pointSize: 10
+                text: "Hide"
+                onClicked: {
+                    controlPanel.shown = !controlPanel.shown
+                    if (controlPanel.shown) {
+                        text = "Hide"
+                        for (let i = 0; i < parent.children.length; i++) {
+                            let child = parent.children[i]
+                            if (child !== showButton)
+                                child.visible = true
+                        }
+                        controlPanel.background.visible = true
+                    }
+                    else {
+                        text = "Show"
+                        for (let i = 0; i < parent.children.length; i++) {
+                            let child = parent.children[i]
+                            if (child !== showButton)
+                                child.visible = false
+                        }
+                        controlPanel.background.visible = false
+                    }
                 }
             }
         }
@@ -265,7 +337,7 @@ Item {
 
     Button {
         x: 20
-        y: parent.height - 30
+        y: parent.height - 40
         text: "Close"
         onClicked: {
             solarSystem3d.parent.closePage()

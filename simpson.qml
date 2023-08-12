@@ -227,6 +227,6 @@ Item {
     }
 
     Component.onCompleted: {
-        plotGraph(8, 1)
+        plotGraph(8, numPeriods.value)
     }
 }

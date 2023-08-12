@@ -11,6 +11,7 @@
 #include "orbits.h"
 #include "linegenerator.h"
 #include "ptolemy.h"
+#include "simulator.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     QScopedPointer<AngleIntegrator> angleIntegrator(new AngleIntegrator(nullptr, planetData.data()));
     QScopedPointer<LineGenerator> lineGenerator(new LineGenerator(nullptr, planetData.data(), orbits.data()));
     QScopedPointer<Ptolemy> ptolemy(new Ptolemy(nullptr, planetData.data(), orbits.data()));
+    QScopedPointer<Simulator> simulator(new Simulator);
 
     // Qt Charts uses Qt Graphics View Framework for drawing, therefore QApplication must be used.
     QApplication app(argc, argv);
@@ -52,6 +54,7 @@ int main(int argc, char *argv[])
     rootContext->setContextProperty("angleIntegrator", angleIntegrator.data());
     rootContext->setContextProperty("lineGenerator", lineGenerator.data());
     rootContext->setContextProperty("ptolemyOrbits", ptolemy.data());
+    rootContext->setContextProperty("simulator", simulator.data());
 
     return app.exec();
 }

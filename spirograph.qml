@@ -4,7 +4,6 @@ import QtQuick.Layouts
 
 Item {
     id: spirograph
-    signal close
     width: 800
     height: 600
 
