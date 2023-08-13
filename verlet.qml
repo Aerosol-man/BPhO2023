@@ -10,16 +10,15 @@ Item {
     height: 600
 
     property var plotSize: Qt.vector2d(4, 4)
-    property real scale: 0.5
+//    property real scale: 0.5
     property bool label: false
     property var labels: []
 
     function fitToScreen(p) {
-        if (!p.x && p.x !== 0.0) { return }
-        let x = (p.x / plotSize.x) * canvas.width * scale
-        x += canvas.width / 2 + canvas.drawMargins.x
-        let y = (p.y / plotSize.y) * canvas.height * scale
-        y += canvas.height / 2 - canvas.drawMargins.y
+        let x = (p.x / plotSize.x) * canvas.width / 2
+        x += chart.plotArea.width / 2
+        let y = (p.y / plotSize.y) * canvas.height / 2
+        y += chart.plotArea.height / 2
 
         return Qt.vector2d(x, y)
     }
@@ -61,6 +60,13 @@ Item {
             }
             label = true
         }
+    }
+
+    onPlotSizeChanged: {
+        xAxis.min = plotSize.x * -1.2
+        xAxis.max = plotSize.x * 1.2
+        yAxis.min = plotSize.y * -1.2
+        yAxis.max = plotSize.y * 1.2
     }
 
     Item {
@@ -154,13 +160,48 @@ Item {
         }
     }
 
-    Canvas
-    {
-        id: canvas
+    ChartView {
+        id: chart
+        title: "2D Planet Orbits"
         anchors.left: controlPanel.right
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: parent.bottom
+        legend.visible: false
+        width: 640
+        height: 480
+        antialiasing: false
+
+        ValuesAxis {
+            id: xAxis
+            titleText: "x (Astronomical Units)"
+            min: -plotSize.x
+            max: plotSize.x
+        }
+
+        ValuesAxis {
+            id: yAxis
+            titleText: "y (Astronomical Units)"
+            min: -plotSize.y
+            max: plotSize.y
+        }
+
+        SplineSeries {
+            id: path
+            name: "path"
+            axisX: xAxis
+            axisY: yAxis
+        }
+    }
+
+    Canvas
+    {
+        id: canvas
+        x: chart.plotArea.x + chart.x
+        y: chart.plotArea.y + chart.y
+        width: chart.plotArea.width
+        height: chart.plotArea.height
+
 
         property var drawMargins: Qt.vector2d(50, 30)
 
@@ -189,17 +230,17 @@ Item {
             ctx.fillStyle = "black"
             ctx.strokeStyle = "black"
 
-            ctx.beginPath()
-            ctx.moveTo(drawMargins.x / 2, drawMargins.y / 2)
-            ctx.lineTo(drawMargins.x / 2, height - drawMargins.y / 2)
-            ctx.lineTo(width - drawMargins.x / 2, height - drawMargins.y / 2)
-            ctx.stroke()
+//            ctx.beginPath()
+//            ctx.moveTo(drawMargins.x / 2, drawMargins.y / 2)
+//            ctx.lineTo(drawMargins.x / 2, height - drawMargins.y / 2)
+//            ctx.lineTo(width - drawMargins.x / 2, height - drawMargins.y / 2)
+//            ctx.stroke()
 
-            let n = 4
-            for (let p = 0; p <= n; p++) {
-                ctx.fillText(lerp(-plotSize.y, plotSize.y, p / n).toFixed(2), 0, lerp(drawMargins.y / 2, height - drawMargins.y / 2, p / n))
-                ctx.fillText(lerp(-plotSize.x, plotSize.x, p / n).toFixed(2), lerp(drawMargins.x / 2, width - drawMargins.x / 2, p / n), height - 5)
-            }
+//            let n = 4
+//            for (let p = 0; p <= n; p++) {
+//                ctx.fillText(lerp(-plotSize.y, plotSize.y, p / n).toFixed(2), 0, lerp(drawMargins.y / 2, height - drawMargins.y / 2, p / n))
+//                ctx.fillText(lerp(-plotSize.x, plotSize.x, p / n).toFixed(2), lerp(drawMargins.x / 2, width - drawMargins.x / 2, p / n), height - 5)
+//            }
 
             for (let i = 0; i < positions.length; i++) {
                 ctx.fillStyle = getColour(i)
