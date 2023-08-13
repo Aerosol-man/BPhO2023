@@ -9,6 +9,5 @@
         <file>spirograph.qml</file>
         <file>ptolemy.qml</file>
         <file>verlet.qml</file>
-        <file>exosystems.qml</file>
     </qresource>
 </RCC>

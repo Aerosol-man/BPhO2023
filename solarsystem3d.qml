@@ -290,16 +290,21 @@ Item {
                 width: 150
 
                 Button {
-                    font.pointSize: 10
+                    Layout.fillWidth: false
+                    Layout.preferredWidth: 40
+                    font.pointSize: 7
                     text: "-"
                     onClicked: {
                         changeAnimationSpeed(.75)
                     }
                 }
-                Label {id:speedText; text: `x${animationSpeed}`; font.pointSize: 7 }
+                Label {id:speedText; text: `x${animationSpeed}`; font.pointSize: 10 }
                 Button {
-                    font.pointSize: 10
+                    Layout.fillWidth: false
+                    Layout.preferredWidth: 40
+                    font.pointSize: 7
                     text: "+"
+                    width: 30
                     onClicked: {
                         changeAnimationSpeed(1.25)
                     }
@@ -345,6 +350,10 @@ Item {
     }
 
     Component.onCompleted: {
+        if (platform === 1) {
+            controlPanel.height = 300
+        }
+
         for (let i = 0; i < 9; i++) {
             planetPaths[0].push(orbits.getOrbit3D(i, 100, true).map(to2D).map(fitToScreen))
         }

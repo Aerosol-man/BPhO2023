@@ -33,10 +33,11 @@ Item {
         plotSize.x = 1; plotSize.y = 1
 
         if (idx === -1) {
-            let n = 10
+            simulator.addBody(100000, Qt.vector2d(0, 0))
+            let n = 19
             for (let i = 0; i < n; i++) {
                 let theta = Math.PI * 2 * Math.random()
-                simulator.addBody(20 + Math.random() * 80, Qt.vector2d(1 + Math.cos(theta) * 0.2 * i, 1 + Math.sin(theta) * 0.2 * i))
+                simulator.addBody(1 + Math.random() * 180, Qt.vector2d(Math.cos(theta) * Math.max(Math.random(), 0.3), Math.sin(theta) * Math.max(Math.random(), 0.3)))
             }
             label = false
             chart.title = "Random Bodies"
@@ -160,7 +161,7 @@ Item {
                 name: "11 Com",
                 bodies: [
                     { name: '11 Comae Berenices', mass: solarMass * 1.66, distance: 0 },
-                    { name: '11 Com B', mass: 6167.3958, distance: 1.29 },
+                    { name: '11 Com B b', mass: 6167.3958, distance: 1.29 },
                 ]
             },
         ]
@@ -185,6 +186,7 @@ Item {
                 textRole: "key"
                 valueRole: "value"
                 currentIndex: 0
+                font.pointSize: 10
                 model: ListModel {
                     id: sceneModel
 
