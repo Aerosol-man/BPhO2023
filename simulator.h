@@ -13,9 +13,14 @@ class Simulator : public QObject
     Q_OBJECT
 public:
     explicit Simulator(QObject *parent = nullptr);
+
     Q_INVOKABLE void addBody(double mass, QVector2D position);
+    Q_INVOKABLE void addBody(double mass, QVector2D position, QVector2D velocity);
     Q_INVOKABLE void removeBody(int index);
+
     Q_INVOKABLE QVector<QVector2D> getPositions();
+    Q_INVOKABLE QVector<double> getMasses();
+
     Q_INVOKABLE void updatePositions(double dt, int subSteps=1);
     Q_INVOKABLE void reset();
 

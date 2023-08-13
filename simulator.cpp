@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+using vec2 = xt::xtensor_fixed<double, xt::xshape<2>>;
+
 Simulator::Simulator(QObject *parent)
     : QObject{parent}
 {
@@ -22,6 +24,17 @@ QVector<QVector2D> Simulator::getPositions()
     return out;
 }
 
+QVector<double> Simulator::getMasses()
+{
+    QVector<double> out;
+    out.reserve(numBodies);
+    for (int i = 0; i < numBodies; i++)
+    {
+        out.append(masses(i));
+    }
+    return out;
+}
+
 void Simulator::updateAccelerations()
 {
     for (int i = 0; i < numBodies; i++)
@@ -30,24 +43,18 @@ void Simulator::updateAccelerations()
     }
 }
 
-xt::xtensor_fixed<double, xt::xshape<2>> Simulator::getAcceleration(int idx)
+vec2 Simulator::getAcceleration(int idx)
 {
-    auto out = xt::xtensor_fixed<double, xt::xshape<2>>({0, 0});
-    xt::xtensor<double, 2> _distances = xt::view(positions, xt::drop(idx), xt::all()) - xt::row(positions, idx):;
+    auto out = vec2({0, 0});
 
-    for (int i = 0; i < numBodies - 1 ; i++)
+    for (int i = 0; i < numBodies; i++)
     {
-        double force = qPow(xt::sum(xt::pow(xt::row(distances, i), 2))() + SQUARED(softening), -1.5);
-
+        if (idx == i) { continue; }
+        auto distance = xt::row(positions, i) - xt::row(positions, idx);
+        double force = qPow(xt::sum(xt::pow(distance, 2))() + SQUARED(softening), -1.5);
         out += distance * force * G * masses(i);
     }
-
     return out;
-}
-
-xt::xtensor<double, 2> getAccelerations(double dt)
-{
-    
 }
 
 void Simulator::updatePositions(double _dt, int substeps)
@@ -70,7 +77,9 @@ void Simulator::addBody(double mass, QVector2D position)
 
     positions(numBodies, 0) = position.x();
     positions(numBodies, 1) = position.y();
-    auto acc = getAcceleration(numBodies);
+    xt::xarray<double> acc = getAcceleration(numBodies);
+    acc(0) = qMin(qMax((double) acc(0), -75.0), 75.0);
+    acc(1) = qMin(qMax((double) acc(1), -75.0), 75.0);
     double meanMass = 0;
     double r = 1;
 
@@ -104,18 +113,32 @@ void Simulator::addBody(double mass, QVector2D position)
     numBodies += 1;
 }
 
+void Simulator::addBody(double mass, QVector2D position, QVector2D velocity)
+{
+    if (numBodies == MAX_BODIES) { return; }
+
+    positions(numBodies, 0) = position.x();
+    positions(numBodies, 1) = position.y();
+    velocities(numBodies, 0) = velocity.x();
+    velocities(numBodies, 1) = velocity.y();
+    xt::row(accelerations, numBodies) = getAcceleration(numBodies);
+    masses(numBodies) = mass;
+
+    numBodies += 1;
+}
+
 void Simulator::reset()
 {
     numBodies = 0;
-    masses.fill(0.);
-    positions.fill(0.);
-    velocities.fill(0.);
-    accelerations.fill(0.);
+//    masses.fill(0.);
+//    positions.fill(0.);
+//    velocities.fill(0.);
+//    accelerations.fill(0.);
 }
 
 void Simulator::removeBody(int index)
 {
-    if (index != numBodies - 1)
+    if (index != numBodies - 1 && index != -1)
     {
         xt::view(masses, xt::range(0, numBodies - 1)) = xt::view(masses, xt::drop(index));
         xt::view(positions, xt::range(0, numBodies - 1), xt::all()) = xt::view(positions, xt::drop(index), xt::all());
