@@ -33,18 +33,21 @@ void Simulator::updateAccelerations()
 xt::xtensor_fixed<double, xt::xshape<2>> Simulator::getAcceleration(int idx)
 {
     auto out = xt::xtensor_fixed<double, xt::xshape<2>>({0, 0});
+    xt::xtensor<double, 2> _distances = xt::view(positions, xt::drop(idx), xt::all()) - xt::row(positions, idx):;
 
-    for (int i = 0; i < numBodies; i++)
+    for (int i = 0; i < numBodies - 1 ; i++)
     {
-        if (idx == i) { continue; }
-        auto distance = xt::row(positions, i) - xt::row(positions, idx);
-
-        double force = qPow(xt::sum(xt::pow(distance, 2))() + SQUARED(softening), -1.5);
+        double force = qPow(xt::sum(xt::pow(xt::row(distances, i), 2))() + SQUARED(softening), -1.5);
 
         out += distance * force * G * masses(i);
     }
 
     return out;
+}
+
+xt::xtensor<double, 2> getAccelerations(double dt)
+{
+    
 }
 
 void Simulator::updatePositions(double _dt, int substeps)
